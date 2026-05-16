@@ -7,12 +7,12 @@ interface Props {
 const { title, summary } = Astro.props;
 ---
 
-<article class="py-3 border-b border-[var(--color-rule-light)] last:border-b-0">
-  <h3 class="text-[1.05rem] font-semibold leading-snug text-[var(--color-ink)] mb-1.5">
+<article class="py-4">
+  <h3 class="text-[1.1rem] font-bold leading-snug text-[var(--color-ink)] mb-2">
     {title}
   </h3>
   {summary && (
-    <p class="text-[0.9rem] leading-relaxed text-[var(--color-ink-light)]">
+    <p class="text-[0.95rem] leading-[1.75] text-[var(--color-ink-light)]">
       {summary}
     </p>
   )}

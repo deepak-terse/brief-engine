@@ -8,17 +8,34 @@ interface Props {
 }
 
 const { title, date, readTime } = Astro.props;
+
+// Format as "Saturday, May 16" style
+const d = new Date(date + 'T00:00:00');
+const dayName = d.toLocaleDateString('en-IN', { weekday: 'long' });
+const monthDay = d.toLocaleDateString('en-IN', { month: 'long', day: 'numeric' });
+const displayDate = `${dayName}, ${monthDay}`;
+
+// Format for pill: "MAY 16, 2026"
+const pillDate = d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 ---
 
-<section class="container-reading pt-10 pb-8 fade-in" id="edition-hero">
-  <hr class="rule-double mb-6" />
-  <h1 class="text-[var(--color-ink)] mb-3 leading-tight">
-    {title}
-  </h1>
-  <div class="flex items-center gap-3 meta-text">
-    <time datetime={date}>{formatDate(date)}</time>
-    <span aria-hidden="true">·</span>
-    <span>{readTime} min read</span>
+<section class="container-reading pt-12 pb-8 text-center fade-in" id="edition-hero">
+  <!-- Date + read time pill -->
+  <div class="mb-6">
+    <span class="pill">
+      {pillDate} · {readTime} MIN READ
+    </span>
   </div>
-  <hr class="rule mt-6" />
+
+  <!-- Large display date -->
+  <h1 class="text-[clamp(2.5rem,6vw,4rem)] mb-4" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-style: italic;">
+    {displayDate}
+  </h1>
+
+  <!-- Subtitle -->
+  <p class="text-[1rem] text-[var(--color-ink-faint)] italic mb-8" style="font-family: var(--font-serif);">
+    The daily hyperlocal briefing for Powai, Mumbai.
+  </p>
+
+  <hr class="rule" />
 </section>

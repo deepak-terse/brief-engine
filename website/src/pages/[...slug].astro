@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import NewspaperLayout from '../layouts/NewspaperLayout.astro';
 import EditionHero from '../components/EditionHero.astro';
 import SectionBlock from '../components/SectionBlock.astro';
+import SubscribeCard from '../components/SubscribeCard.astro';
 
 export async function getStaticPaths() {
   const editions = await getCollection('editions');
@@ -23,6 +24,11 @@ export async function getStaticPaths() {
 
 const { edition } = Astro.props;
 const { data } = edition;
+
+// Split sections for mid-page subscribe insert
+const midPoint = Math.ceil(data.sections.length / 2);
+const firstHalf = data.sections.slice(0, midPoint);
+const secondHalf = data.sections.slice(midPoint);
 ---
 
 <NewspaperLayout
@@ -33,16 +39,23 @@ const { data } = edition;
 >
   <EditionHero title={data.title} date={data.date} readTime={data.readTime} />
 
-  {data.sections.map((section) => (
+  {firstHalf.map((section) => (
+    <SectionBlock id={section.id} title={section.title} items={section.items} />
+  ))}
+
+  <!-- Mid-page subscribe card -->
+  <SubscribeCard />
+
+  {secondHalf.map((section) => (
     <SectionBlock id={section.id} title={section.title} items={section.items} />
   ))}
 
   <!-- End of edition -->
-  <div class="container-reading py-8">
-    <hr class="rule-double mb-4" />
+  <div class="container-reading py-10">
+    <hr class="rule mb-6" />
     <div class="flex items-center justify-between meta-text">
       <p>End of edition</p>
-      <a href="/archive" class="font-sans text-xs font-medium text-[var(--color-accent)] hover:underline">
+      <a href="/archive" class="font-sans text-sm font-semibold text-[var(--color-ink)] hover:text-[var(--color-navy)] transition-colors">
         ← Browse all editions
       </a>
     </div>

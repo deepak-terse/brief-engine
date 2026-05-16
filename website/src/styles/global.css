@@ -2,32 +2,42 @@
 
 /* ============================================
    POWAI DAILY — Design System
-   Premium newspaper typography & calm palette
+   Inspired by Powai Pulse reference design
+   Warm cream bg, navy accents, bold serif display
    ============================================ */
 
 /* --- Custom Theme --- */
 @theme {
-  /* Newspaper color palette — warm, muted, editorial */
-  --color-ink: #1a1a1a;
-  --color-ink-light: #4a4a4a;
-  --color-ink-muted: #6b6b6b;
-  --color-ink-faint: #999999;
-  --color-paper: #faf9f7;
-  --color-paper-warm: #f5f3ef;
-  --color-paper-accent: #ede9e3;
-  --color-rule: #d4d0ca;
-  --color-rule-light: #e8e5df;
-  --color-accent: #8b4513;
-  --color-accent-light: #a0522d;
+  /* Warm cream palette */
+  --color-ink: #1a1a2e;
+  --color-ink-light: #374151;
+  --color-ink-muted: #6b7280;
+  --color-ink-faint: #9ca3af;
+  --color-paper: #e8e4de;
+  --color-paper-warm: #ddd8d0;
+  --color-paper-accent: #d5d0c8;
+  --color-paper-card: #e2ded7;
+  --color-rule: #c8c3ba;
+  --color-rule-light: #d5d0c8;
+  --color-accent: #1e293b;
+  --color-accent-light: #334155;
+  --color-navy: #1e3a5f;
+  --color-navy-dark: #0f2644;
   --color-highlight: #fff3cd;
+  --color-tag-red: #dc2626;
+  --color-tag-red-bg: rgba(220, 38, 38, 0.08);
+  --color-tag-blue: #2563eb;
+  --color-tag-blue-bg: rgba(37, 99, 235, 0.08);
+  --color-tag-green: #059669;
+  --color-tag-green-bg: rgba(5, 150, 105, 0.08);
 
-  /* Typography scale — editorial hierarchy */
+  /* Typography */
+  --font-display: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
   --font-serif: 'Source Serif 4', 'Georgia', 'Times New Roman', serif;
   --font-sans: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Spacing rhythm — generous whitespace */
-  --spacing-reading: clamp(1rem, 4vw, 2rem);
+  /* Spacing */
+  --spacing-reading: clamp(1.25rem, 5vw, 2.5rem);
 }
 
 /* --- Base Styles --- */
@@ -44,36 +54,36 @@
     font-family: var(--font-serif);
     color: var(--color-ink);
     background-color: var(--color-paper);
-    line-height: 1.7;
+    line-height: 1.75;
     letter-spacing: -0.01em;
   }
 
-  /* Headlines */
+  /* Headlines — Display serif */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.15;
     letter-spacing: -0.02em;
     color: var(--color-ink);
   }
 
   h1 {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-size: clamp(2rem, 5vw, 3.25rem);
   }
 
   h2 {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
   }
 
   h3 {
-    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-size: clamp(1.15rem, 2.5vw, 1.4rem);
   }
 
   /* Links */
   a {
     color: var(--color-accent);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, opacity 0.2s ease;
   }
 
   a:hover {
@@ -91,23 +101,32 @@
 @layer utilities {
   /* Reading container */
   .container-reading {
-    max-width: 680px;
+    max-width: 720px;
     margin-left: auto;
     margin-right: auto;
     padding-left: var(--spacing-reading);
     padding-right: var(--spacing-reading);
   }
 
-  /* Wider container for archive/listings */
+  /* Wider container */
   .container-wide {
-    max-width: 860px;
+    max-width: 900px;
     margin-left: auto;
     margin-right: auto;
     padding-left: var(--spacing-reading);
     padding-right: var(--spacing-reading);
   }
 
-  /* Newspaper rule (horizontal line) */
+  /* Full-width container for homepage hero */
+  .container-full {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-reading);
+    padding-right: var(--spacing-reading);
+  }
+
+  /* Newspaper rules */
   .rule {
     border: none;
     border-top: 1px solid var(--color-rule);
@@ -129,9 +148,9 @@
   /* Section label — editorial style */
   .section-label {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-ink-muted);
   }
@@ -144,15 +163,181 @@
     letter-spacing: 0.01em;
   }
 
+  /* Pill badge */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    background: var(--color-paper-card);
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+  }
+
+  /* Tag badges for news items */
+  .tag {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-right: 0.25rem;
+    margin-top: 0.35rem;
+  }
+
+  /* Why it matters callout */
+  .callout-why {
+    background: var(--color-paper-warm);
+    border: 1px solid var(--color-rule);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+  }
+
+  .callout-why .callout-label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin-bottom: 0.4rem;
+  }
+
+  /* Section subtitle — italic with left border */
+  .section-subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--color-ink-faint);
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--color-rule);
+  }
+
+  /* Subscribe card */
+  .subscribe-card {
+    background: var(--color-paper-warm);
+    border: 1px solid var(--color-rule);
+    border-radius: 10px;
+    padding: 2rem 2.5rem;
+    text-align: center;
+  }
+
+  /* Archive card */
+  .archive-card {
+    background: var(--color-paper-card);
+    border: 1px solid var(--color-rule);
+    border-radius: 10px;
+    padding: 1.5rem 1.75rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .archive-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Feature cards grid */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .feature-card {
+    background: var(--color-paper-card);
+    border: 1px solid var(--color-rule);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Navy CTA section */
+  .cta-navy {
+    background: var(--color-navy-dark);
+    color: #fff;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .cta-navy h2 {
+    color: #fff;
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  /* Subscribe input */
+  .subscribe-input {
+    display: flex;
+    max-width: 480px;
+    margin: 0 auto;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-rule);
+    background: #fff;
+  }
+
+  .subscribe-input input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    border: none;
+    outline: none;
+    background: #fff;
+    color: var(--color-ink);
+  }
+
+  .subscribe-input input::placeholder {
+    color: var(--color-ink-faint);
+  }
+
+  .subscribe-input button {
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--color-navy-dark);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .subscribe-input button:hover {
+    background: var(--color-navy);
+  }
+
   /* Fade in animation */
   .fade-in {
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.5s ease-out;
   }
 
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;

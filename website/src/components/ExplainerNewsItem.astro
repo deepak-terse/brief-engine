@@ -8,24 +8,21 @@ interface Props {
 const { title, brief, whyItMatters } = Astro.props;
 ---
 
-<article class="py-4 border-b border-[var(--color-rule-light)] last:border-b-0">
-  <h3 class="text-[1.1rem] font-bold leading-snug text-[var(--color-ink)] mb-3">
+<article class="py-5">
+  <h3 class="text-[1.15rem] font-bold leading-snug text-[var(--color-ink)] mb-3">
     {title}
   </h3>
 
   {brief && (
-    <div class="mb-3">
-      <span class="section-label text-[var(--color-accent)]">The Brief</span>
-      <p class="text-[0.9rem] leading-relaxed text-[var(--color-ink-light)] mt-1">
-        {brief}
-      </p>
-    </div>
+    <p class="text-[0.95rem] leading-[1.75] text-[var(--color-ink-light)] mb-3">
+      {brief}
+    </p>
   )}
 
   {whyItMatters && (
-    <div class="pl-4 border-l-2 border-[var(--color-accent)] bg-[var(--color-paper-warm)] rounded-r-sm py-2.5 pr-3">
-      <span class="section-label text-[var(--color-accent)]">Why it matters</span>
-      <p class="text-[0.9rem] leading-relaxed text-[var(--color-ink-light)] mt-1">
+    <div class="callout-why">
+      <p class="callout-label">WHY IT MATTERS</p>
+      <p class="text-[0.9rem] leading-relaxed text-[var(--color-ink-light)]">
         {whyItMatters}
       </p>
     </div>

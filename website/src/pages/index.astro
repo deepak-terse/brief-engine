@@ -1,43 +1,168 @@
 ---
-import { getCollection } from 'astro:content';
-import NewspaperLayout from '../layouts/NewspaperLayout.astro';
-import EditionHero from '../components/EditionHero.astro';
-import SectionBlock from '../components/SectionBlock.astro';
-
-// Get all editions and sort by date (newest first)
-const allEditions = await getCollection('editions');
-const sortedEditions = allEditions.sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-);
-
-// Get the latest edition
-const latestEdition = sortedEditions[0];
-
-// If no editions exist, show empty state
-if (!latestEdition) {
-  return Astro.redirect('/archive');
-}
-
-const { data } = latestEdition;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
 ---
 
-<NewspaperLayout
-  title={data.title}
-  date={data.date}
-  readTime={data.readTime}
-  description={`${data.title} — Your ${data.readTime}-minute morning brief for Powai & Mumbai.`}
+<BaseLayout
+  title="Powai Daily"
+  description="Your trusted local friend who reads all the news, filters the noise, and distills it into a tight 5-minute morning brief."
 >
-  <EditionHero title={data.title} date={data.date} readTime={data.readTime} />
+  <Header />
 
-  {data.sections.map((section) => (
-    <SectionBlock id={section.id} title={section.title} items={section.items} />
-  ))}
+  <main class="flex-1">
+    <!-- HERO SECTION -->
+    <section class="pt-16 pb-20 text-center fade-in" id="hero">
+      <div class="container-reading">
+        <!-- Pill badge -->
+        <div class="mb-6">
+          <span class="pill">
+            <span class="inline-block w-2 h-2 rounded-full bg-[var(--color-navy)]"></span>
+            The daily brief for Powai
+          </span>
+        </div>
 
-  <!-- End of edition marker -->
-  <div class="container-reading py-8">
-    <hr class="rule-double mb-4" />
-    <p class="text-center meta-text">
-      That's your brief for today. Have a calm, productive day.
-    </p>
-  </div>
-</NewspaperLayout>
+        <!-- Main headline -->
+        <h1 class="text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] mb-6" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800;">
+          Read everything.<br />
+          <em class="text-[var(--color-ink-muted)]">Know exactly what matters.</em>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-[1.1rem] leading-relaxed text-[var(--color-ink-light)] max-w-[540px] mx-auto mb-10">
+          Powai Daily is your trusted local friend who reads all the news, filters the noise, and distills it into a tight 5-minute morning brief. Sent at 7 AM.
+        </p>
+
+        <!-- Subscribe form -->
+        <div class="subscribe-input mx-auto" style="max-width: 480px;">
+          <input type="email" placeholder="Enter your email address" id="hero-email" />
+          <button type="button" id="hero-subscribe">Subscribe</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="py-16" id="features">
+      <div class="container-full">
+        <div class="text-center mb-12">
+          <h2 class="mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700;">
+            What's inside the briefing?
+          </h2>
+          <p class="text-[1rem] text-[var(--color-ink-muted)] max-w-[520px] mx-auto">
+            Dense enough to respect your intelligence, airy enough to not feel like a chore.
+          </p>
+        </div>
+
+        <div class="feature-grid max-w-[960px] mx-auto">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon bg-blue-100">📍</div>
+            <h3 class="text-[1.1rem] font-bold mb-2" style="font-family: 'Playfair Display', Georgia, serif;">
+              Ground Zero
+            </h3>
+            <p class="text-[0.9rem] text-[var(--color-ink-muted)] leading-relaxed">
+              Hyperlocal Powai news. Hiranandani updates, lake cleanup, local business.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon bg-red-100">⚡</div>
+            <h3 class="text-[1.1rem] font-bold mb-2" style="font-family: 'Playfair Display', Georgia, serif;">
+              Alerts
+            </h3>
+            <p class="text-[0.9rem] text-[var(--color-ink-muted)] leading-relaxed">
+              Traffic bottlenecks, weather warnings, power outages, safety alerts.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon bg-green-100">📈</div>
+            <h3 class="text-[1.1rem] font-bold mb-2" style="font-family: 'Playfair Display', Georgia, serif;">
+              Wallet Watch
+            </h3>
+            <p class="text-[0.9rem] text-[var(--color-ink-muted)] leading-relaxed">
+              Real estate prices, EMI changes, fuel costs, and job market trends.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon bg-yellow-100">📋</div>
+            <h3 class="text-[1.1rem] font-bold mb-2" style="font-family: 'Playfair Display', Georgia, serif;">
+              The Explainer
+            </h3>
+            <p class="text-[0.9rem] text-[var(--color-ink-muted)] leading-relaxed">
+              National and global news translated into how it impacts Mumbai.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY IT MATTERS SECTION -->
+    <section class="py-16" id="why-it-matters">
+      <div class="container-full">
+        <div class="flex flex-col md:flex-row items-start gap-12 max-w-[960px] mx-auto">
+          <div class="flex-1">
+            <h2 class="text-[clamp(1.75rem,3vw,2.5rem)] mb-4" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700;">
+              The "Why it matters" rule
+            </h2>
+            <p class="text-[1rem] text-[var(--color-ink-light)] leading-relaxed mb-6">
+              We don't just report what happened. Every major story includes a distinct callout explaining exactly why you should care and how it affects your day, your wallet, or your neighborhood.
+            </p>
+            <a href="/archive" class="inline-flex items-center gap-2 font-sans text-sm font-semibold text-[var(--color-ink)] hover:text-[var(--color-navy)] transition-colors">
+              Browse past editions <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <!-- Preview card -->
+          <div class="flex-1 max-w-[420px]">
+            <div class="feature-card">
+              <p class="text-sm font-semibold text-[var(--color-ink-muted)] mb-3" style="font-family: 'Playfair Display', Georgia, serif;">
+                🏙️ Mumbai Matters
+              </p>
+              <h4 class="text-[1rem] font-bold mb-2 leading-snug">
+                Metro Line 6 Trial Runs Begin
+              </h4>
+              <p class="text-[0.85rem] text-[var(--color-ink-light)] leading-relaxed mb-3">
+                Trial runs for the Swami Samarth Nagar to Vikhroli Metro Line 6 have officially commenced. The 15.31km line connects the Western and Eastern Express Highways.
+              </p>
+              <div class="callout-why">
+                <p class="callout-label">WHY IT MATTERS</p>
+                <p class="text-[0.85rem] text-[var(--color-ink-light)] leading-relaxed">
+                  Once operational, the commute from Powai to Andheri will drop from 45 mins to just 15 mins, drastically reducing JVLR traffic congestion.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-navy" id="cta">
+      <div class="container-reading">
+        <h2 class="text-[clamp(2rem,4vw,3rem)] mb-4" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-style: italic;">
+          Ready to start your day right?
+        </h2>
+        <p class="text-[1rem] text-white/70 mb-8 max-w-[480px] mx-auto">
+          Join thousands of neighbors reading Powai Daily every morning.
+        </p>
+        <div class="subscribe-input mx-auto" style="max-width: 480px;">
+          <input type="email" placeholder="Enter your email address" id="cta-email" />
+          <button type="button" id="cta-subscribe">Subscribe</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[var(--color-navy-dark)] text-white/50 py-8">
+    <div class="container-reading text-center">
+      <p class="font-sans text-xs">
+        &copy; {new Date().getFullYear()} Powai Daily. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</BaseLayout>

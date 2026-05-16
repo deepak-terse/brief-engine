@@ -14,8 +14,8 @@ const { title, description, date, readTime } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description} date={date}>
-  <Header date={date} readTime={readTime} />
-  <main class="flex-1 pb-16">
+  <Header />
+  <main class="flex-1">
     <slot />
   </main>
   <EditionFooter />

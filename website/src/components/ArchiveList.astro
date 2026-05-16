@@ -1,6 +1,4 @@
 ---
-import { formatDate } from '../utils/date';
-
 interface Edition {
   id: string;
   data: {
@@ -18,12 +16,23 @@ interface Props {
 const { editions } = Astro.props;
 
 function editionHref(edition: Edition): string {
-  // id is "powai_morning_edition/2026-05-16" or just "2026-05-16"
   return `/${edition.id}`;
+}
+
+function formatArchiveDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+}
+
+function formatDisplayDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.toLocaleDateString('en-IN', { weekday: 'long' });
+  const monthDay = d.toLocaleDateString('en-IN', { month: 'long', day: 'numeric' });
+  return `${day}, ${monthDay}`;
 }
 ---
 
-<div class="space-y-0" id="archive-list">
+<div class="space-y-4" id="archive-list">
   {editions.length === 0 ? (
     <div class="py-16 text-center">
       <p class="text-[var(--color-ink-muted)] text-lg">No editions yet.</p>
@@ -33,24 +42,24 @@ function editionHref(edition: Edition): string {
     editions.map((edition) => (
       <a
         href={editionHref(edition)}
-        class="block py-4 border-b border-[var(--color-rule-light)] hover:bg-[var(--color-paper-warm)] transition-colors -mx-4 px-4 rounded-sm no-underline group"
+        class="archive-card block no-underline group"
         id={`archive-item-${edition.data.date}`}
       >
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <h3 class="text-[1rem] font-semibold text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors leading-snug mb-1">
-              {edition.data.title}
-            </h3>
-            <time class="meta-text" datetime={edition.data.date}>
-              {formatDate(edition.data.date, true)}
-            </time>
-            <span class="meta-text text-[var(--color-ink-faint)]">·</span>
-            <span class="meta-text text-[var(--color-ink-faint)]">{edition.data.editionKey}</span>
-          </div>
-          <span class="meta-text whitespace-nowrap shrink-0 mt-1">
-            {edition.data.readTime} min
+        <div class="flex items-center gap-3 mb-2">
+          <span class="meta-text flex items-center gap-1.5">
+            <span aria-hidden="true">📅</span>
+            {formatArchiveDate(edition.data.date)}
+          </span>
+          <span class="meta-text">•</span>
+          <span class="meta-text flex items-center gap-1.5">
+            <span aria-hidden="true">🕐</span>
+            {edition.data.readTime} MIN READ
           </span>
         </div>
+        <h3 class="text-[1.25rem] font-bold group-hover:text-[var(--color-navy)] transition-colors leading-snug"
+          style="font-family: 'Playfair Display', Georgia, serif; font-style: italic;">
+          {formatDisplayDate(edition.data.date)}
+        </h3>
       </a>
     ))
   )}

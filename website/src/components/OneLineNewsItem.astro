@@ -6,9 +6,9 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<article class="py-1.5">
-  <p class="text-[0.95rem] leading-relaxed text-[var(--color-ink)] flex items-start gap-2">
-    <span class="text-[var(--color-ink-faint)] mt-0.5 shrink-0" aria-hidden="true">•</span>
-    <span>{title}</span>
+<article class="py-2">
+  <p class="text-[1rem] leading-[1.75] text-[var(--color-ink)] flex items-start gap-3">
+    <span class="text-[var(--color-ink-faint)] mt-[0.35rem] shrink-0 text-lg" aria-hidden="true">•</span>
+    <span class="font-semibold">{title}</span>
   </p>
 </article>

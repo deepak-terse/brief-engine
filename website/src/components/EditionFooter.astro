@@ -2,18 +2,31 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-[var(--color-rule)] mt-auto">
-  <div class="container-reading py-8">
-    <hr class="rule-double mb-6" />
-    <div class="text-center space-y-3">
-      <p class="font-sans text-xs font-semibold tracking-[0.12em] uppercase text-[var(--color-ink-muted)]">
+<footer class="mt-auto">
+  <!-- CTA band -->
+  <div class="cta-navy">
+    <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-style: italic;">
+      Never miss a briefing
+    </h2>
+    <p class="text-[0.95rem] text-white/60 mb-6">
+      Get tomorrow's edition delivered to your inbox.
+    </p>
+    <div class="subscribe-input mx-auto" style="max-width: 420px;">
+      <input type="email" placeholder="Enter your email address" id="footer-email" />
+      <button type="button" id="footer-subscribe">Subscribe</button>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bg-[var(--color-navy-dark)] text-white/40 py-6">
+    <div class="container-reading text-center space-y-2">
+      <p class="font-sans text-xs font-semibold tracking-wider uppercase text-white/50">
         Powai Daily
       </p>
-      <p class="meta-text">
-        Hyperlocal news for Powai & Mumbai.<br />
-        Curated to respect your time.
+      <p class="font-sans text-xs">
+        Hyperlocal news for Powai & Mumbai. Curated to respect your time.
       </p>
-      <p class="meta-text text-[var(--color-ink-faint)]">
+      <p class="font-sans text-xs text-white/30">
         &copy; {year} Powai Daily. All rights reserved.
       </p>
     </div>

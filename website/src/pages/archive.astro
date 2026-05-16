@@ -13,16 +13,17 @@ const sortedEditions = allEditions.sort(
   title="Archive"
   description="Browse all past editions of Powai Daily — your hyperlocal morning brief for Powai & Mumbai."
 >
-  <div class="container-reading pt-10 pb-8 fade-in">
-    <hr class="rule-double mb-6" />
-    <h1 class="mb-2">Edition Archive</h1>
-    <p class="meta-text mb-6">
-      All past editions, newest first.
+  <div class="container-wide pt-12 pb-6 fade-in">
+    <h1 class="mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-style: italic;">
+      The Archive
+    </h1>
+    <p class="text-[1rem] text-[var(--color-ink-muted)] mb-6">
+      Browse past editions of Powai Daily.
     </p>
-    <hr class="rule mb-4" />
+    <hr class="rule mb-8" />
   </div>
 
-  <div class="container-reading pb-16">
+  <div class="container-wide pb-16">
     <ArchiveList editions={sortedEditions} />
   </div>
 </NewspaperLayout>

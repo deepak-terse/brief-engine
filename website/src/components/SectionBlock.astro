@@ -21,13 +21,34 @@ const { id, title, items } = Astro.props;
 
 // Skip rendering if section has no items
 if (items.length === 0) return;
+
+// Section subtitle map — italic description per section
+const subtitles: Record<string, string> = {
+  right_now: 'Immediate impact — traffic, weather, outages, safety',
+  powai_pulse: 'Powai hyperlocal news',
+  mumbai_moves: 'City-wide civic, transport, infrastructure',
+  money_rules: 'Economy, policy, personal finance impact',
+  beyond_city: 'National and global, explained locally',
+};
+
+const subtitle = subtitles[id] || '';
 ---
 
-<section class="container-reading py-6 fade-in" id={`section-${id}`} aria-labelledby={`heading-${id}`}>
-  <h2 id={`heading-${id}`} class="mb-5 pb-2 border-b-2 border-[var(--color-ink)]">
+<section class="container-reading py-8 fade-in" id={`section-${id}`} aria-labelledby={`heading-${id}`}>
+  <!-- Section heading with emoji -->
+  <h2 id={`heading-${id}`} class="mb-2" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700;">
     {title}
   </h2>
-  <div class="space-y-4">
+  <hr class="rule mb-5" />
+
+  <!-- Section subtitle -->
+  {subtitle && (
+    <div class="mb-6">
+      <p class="section-subtitle">{subtitle}</p>
+    </div>
+  )}
+
+  <div class="space-y-2">
     {items.map((item) => {
       if (item.type === 'one_line') {
         return <OneLineNewsItem title={item.title} />;
