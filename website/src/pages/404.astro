@@ -1,0 +1,26 @@
+---
+import NewspaperLayout from '../layouts/NewspaperLayout.astro';
+---
+
+<NewspaperLayout title="Page Not Found">
+  <div class="container-reading py-20 text-center fade-in">
+    <hr class="rule-double mb-8" />
+    <h1 class="mb-4">404</h1>
+    <p class="text-[var(--color-ink-light)] text-lg mb-2">
+      This page doesn't exist.
+    </p>
+    <p class="meta-text mb-8">
+      Perhaps the edition you're looking for has moved or hasn't been published yet.
+    </p>
+    <div class="flex items-center justify-center gap-6">
+      <a href="/" class="font-sans text-sm font-medium text-[var(--color-accent)] hover:underline">
+        Today's Edition
+      </a>
+      <span class="text-[var(--color-rule)]" aria-hidden="true">|</span>
+      <a href="/archive" class="font-sans text-sm font-medium text-[var(--color-accent)] hover:underline">
+        Browse Archive
+      </a>
+    </div>
+    <hr class="rule-double mt-8" />
+  </div>
+</NewspaperLayout>

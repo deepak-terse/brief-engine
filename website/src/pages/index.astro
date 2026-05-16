@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import NewspaperLayout from '../layouts/NewspaperLayout.astro';
+import EditionHero from '../components/EditionHero.astro';
+import SectionBlock from '../components/SectionBlock.astro';
+
+// Get all editions and sort by date (newest first)
+const allEditions = await getCollection('editions');
+const sortedEditions = allEditions.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Get the latest edition
+const latestEdition = sortedEditions[0];
+
+// If no editions exist, show empty state
+if (!latestEdition) {
+  return Astro.redirect('/archive');
+}
+
+const { data } = latestEdition;
+---
+
+<NewspaperLayout
+  title={data.title}
+  date={data.date}
+  readTime={data.readTime}
+  description={`${data.title} — Your ${data.readTime}-minute morning brief for Powai & Mumbai.`}
+>
+  <EditionHero title={data.title} date={data.date} readTime={data.readTime} />
+
+  {data.sections.map((section) => (
+    <SectionBlock id={section.id} title={section.title} items={section.items} />
+  ))}
+
+  <!-- End of edition marker -->
+  <div class="container-reading py-8">
+    <hr class="rule-double mb-4" />
+    <p class="text-center meta-text">
+      That's your brief for today. Have a calm, productive day.
+    </p>
+  </div>
+</NewspaperLayout>

@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import NewspaperLayout from '../layouts/NewspaperLayout.astro';
+import ArchiveList from '../components/ArchiveList.astro';
+
+const allEditions = await getCollection('editions');
+const sortedEditions = allEditions.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+
+<NewspaperLayout
+  title="Archive"
+  description="Browse all past editions of Powai Daily — your hyperlocal morning brief for Powai & Mumbai."
+>
+  <div class="container-reading pt-10 pb-8 fade-in">
+    <hr class="rule-double mb-6" />
+    <h1 class="mb-2">Edition Archive</h1>
+    <p class="meta-text mb-6">
+      All past editions, newest first.
+    </p>
+    <hr class="rule mb-4" />
+  </div>
+
+  <div class="container-reading pb-16">
+    <ArchiveList editions={sortedEditions} />
+  </div>
+</NewspaperLayout>

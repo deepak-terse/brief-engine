@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<article class="py-1.5">
+  <p class="text-[0.95rem] leading-relaxed text-[var(--color-ink)] flex items-start gap-2">
+    <span class="text-[var(--color-ink-faint)] mt-0.5 shrink-0" aria-hidden="true">•</span>
+    <span>{title}</span>
+  </p>
+</article>

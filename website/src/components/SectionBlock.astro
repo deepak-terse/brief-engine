@@ -1,0 +1,50 @@
+---
+import OneLineNewsItem from './OneLineNewsItem.astro';
+import ShortNewsItem from './ShortNewsItem.astro';
+import ExplainerNewsItem from './ExplainerNewsItem.astro';
+
+interface NewsItem {
+  type: 'one_line' | 'short' | 'explainer';
+  title: string;
+  summary?: string;
+  brief?: string;
+  why_it_matters?: string;
+}
+
+interface Props {
+  id: string;
+  title: string;
+  items: NewsItem[];
+}
+
+const { id, title, items } = Astro.props;
+
+// Skip rendering if section has no items
+if (items.length === 0) return;
+---
+
+<section class="container-reading py-6 fade-in" id={`section-${id}`} aria-labelledby={`heading-${id}`}>
+  <h2 id={`heading-${id}`} class="mb-5 pb-2 border-b-2 border-[var(--color-ink)]">
+    {title}
+  </h2>
+  <div class="space-y-4">
+    {items.map((item) => {
+      if (item.type === 'one_line') {
+        return <OneLineNewsItem title={item.title} />;
+      }
+      if (item.type === 'short') {
+        return <ShortNewsItem title={item.title} summary={item.summary} />;
+      }
+      if (item.type === 'explainer') {
+        return (
+          <ExplainerNewsItem
+            title={item.title}
+            brief={item.brief}
+            whyItMatters={item.why_it_matters}
+          />
+        );
+      }
+      return null;
+    })}
+  </div>
+</section>

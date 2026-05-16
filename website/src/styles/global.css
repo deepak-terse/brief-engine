@@ -1,0 +1,162 @@
+@import "tailwindcss";
+
+/* ============================================
+   POWAI DAILY — Design System
+   Premium newspaper typography & calm palette
+   ============================================ */
+
+/* --- Custom Theme --- */
+@theme {
+  /* Newspaper color palette — warm, muted, editorial */
+  --color-ink: #1a1a1a;
+  --color-ink-light: #4a4a4a;
+  --color-ink-muted: #6b6b6b;
+  --color-ink-faint: #999999;
+  --color-paper: #faf9f7;
+  --color-paper-warm: #f5f3ef;
+  --color-paper-accent: #ede9e3;
+  --color-rule: #d4d0ca;
+  --color-rule-light: #e8e5df;
+  --color-accent: #8b4513;
+  --color-accent-light: #a0522d;
+  --color-highlight: #fff3cd;
+
+  /* Typography scale — editorial hierarchy */
+  --font-serif: 'Source Serif 4', 'Georgia', 'Times New Roman', serif;
+  --font-sans: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing rhythm — generous whitespace */
+  --spacing-reading: clamp(1rem, 4vw, 2rem);
+}
+
+/* --- Base Styles --- */
+@layer base {
+  html {
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-serif);
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+  }
+
+  /* Headlines */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  h3 {
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  }
+
+  /* Links */
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--color-accent-light);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-highlight);
+    color: var(--color-ink);
+  }
+}
+
+/* --- Utility Classes --- */
+@layer utilities {
+  /* Reading container */
+  .container-reading {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-reading);
+    padding-right: var(--spacing-reading);
+  }
+
+  /* Wider container for archive/listings */
+  .container-wide {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-reading);
+    padding-right: var(--spacing-reading);
+  }
+
+  /* Newspaper rule (horizontal line) */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--color-rule);
+    margin: 0;
+  }
+
+  .rule-thick {
+    border: none;
+    border-top: 2px solid var(--color-ink);
+    margin: 0;
+  }
+
+  .rule-double {
+    border: none;
+    border-top: 3px double var(--color-ink);
+    margin: 0;
+  }
+
+  /* Section label — editorial style */
+  .section-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  /* Meta text */
+  .meta-text {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-ink-faint);
+    letter-spacing: 0.01em;
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

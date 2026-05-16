@@ -1,0 +1,64 @@
+---
+import { formatDate } from '../utils/date';
+
+interface Props {
+  date?: string;
+  readTime?: number;
+}
+
+const { date, readTime } = Astro.props;
+
+const formattedDate = formatDate(date);
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-[var(--color-paper)]/95 backdrop-blur-sm border-b border-[var(--color-rule-light)]">
+  <div class="container-reading">
+    <!-- Top bar -->
+    <div class="flex items-center justify-between py-3">
+      <a href="/" class="no-underline hover:opacity-80 transition-opacity" id="header-logo">
+        <span class="font-sans text-xs font-semibold tracking-[0.12em] uppercase text-[var(--color-ink-muted)]">
+          Powai Daily
+        </span>
+      </a>
+      <nav class="flex items-center gap-4" id="header-nav">
+        <a
+          href="/"
+          class:list={[
+            'font-sans text-xs font-medium tracking-wide uppercase transition-colors',
+            currentPath === '/' ? 'text-[var(--color-ink)]' : 'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-muted)]',
+          ]}
+          id="nav-home"
+        >
+          Today
+        </a>
+        <a
+          href="/archive"
+          class:list={[
+            'font-sans text-xs font-medium tracking-wide uppercase transition-colors',
+            currentPath === '/archive' || currentPath === '/archive/' ? 'text-[var(--color-ink)]' : 'text-[var(--color-ink-faint)] hover:text-[var(--color-ink-muted)]',
+          ]}
+          id="nav-archive"
+        >
+          Archive
+        </a>
+      </nav>
+    </div>
+
+    <!-- Edition meta — shown when viewing an edition -->
+    {(formattedDate || readTime) && (
+      <div class="flex items-center justify-between pb-2.5 border-t border-[var(--color-rule-light)] pt-2">
+        {formattedDate && (
+          <time class="meta-text" datetime={date}>
+            {formattedDate}
+          </time>
+        )}
+        {readTime && (
+          <span class="meta-text">
+            {readTime} min read
+          </span>
+        )}
+      </div>
+    )}
+  </div>
+</header>

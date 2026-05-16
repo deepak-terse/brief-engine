@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import NewspaperLayout from '../layouts/NewspaperLayout.astro';
+import EditionHero from '../components/EditionHero.astro';
+import SectionBlock from '../components/SectionBlock.astro';
+
+export async function getStaticPaths() {
+  const editions = await getCollection('editions');
+  return editions.map((edition) => {
+    // edition.id is like "powai_morning_edition/2026-05-16"
+    // or just "2026-05-16" for flat files
+    const idParts = edition.id.split('/');
+    const slug = idParts.length > 1
+      ? idParts.join('/')           // edition_key/date
+      : edition.data.date;          // fallback to date only
+
+    return {
+      params: { slug },
+      props: { edition },
+    };
+  });
+}
+
+const { edition } = Astro.props;
+const { data } = edition;
+---
+
+<NewspaperLayout
+  title={data.title}
+  date={data.date}
+  readTime={data.readTime}
+  description={`${data.title} — Your ${data.readTime}-minute morning brief for Powai & Mumbai.`}
+>
+  <EditionHero title={data.title} date={data.date} readTime={data.readTime} />
+
+  {data.sections.map((section) => (
+    <SectionBlock id={section.id} title={section.title} items={section.items} />
+  ))}
+
+  <!-- End of edition -->
+  <div class="container-reading py-8">
+    <hr class="rule-double mb-4" />
+    <div class="flex items-center justify-between meta-text">
+      <p>End of edition</p>
+      <a href="/archive" class="font-sans text-xs font-medium text-[var(--color-accent)] hover:underline">
+        ← Browse all editions
+      </a>
+    </div>
+  </div>
+</NewspaperLayout>

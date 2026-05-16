@@ -1,0 +1,22 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import EditionFooter from '../components/EditionFooter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: string;
+  readTime?: number;
+}
+
+const { title, description, date, readTime } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} date={date}>
+  <Header date={date} readTime={readTime} />
+  <main class="flex-1 pb-16">
+    <slot />
+  </main>
+  <EditionFooter />
+</BaseLayout>
