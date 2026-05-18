@@ -7,16 +7,20 @@ import ollama
 
 from .config import BRIEF_TEMPLATES
 from .database import get_connection
+from .model import MODEL
 
 logger = logging.getLogger(__name__)
 
-MODEL = "qwen3:8b"
+# ───────────────────────────────────────────────────────────────────
+# LLM prompts — newsletter tone, impact-first framing
+# ───────────────────────────────────────────────────────────────────
 
 WHY_IT_MATTERS_PROMPT = """\
-You are a local news assistant. Given a news title and summary, write 1-2 sentences \
-explaining how this event specifically affects a reader's daily life — covering costs, \
-commute, safety, health, work, or decisions as relevant. Be concrete and direct. \
-No preamble, no generic filler.
+You are writing for a hyperlocal neighborhood newsletter (Powai, Mumbai).
+Given a news title and summary, write 1 sentence explaining how this \
+specifically affects a resident's daily life — focus on commute impact, \
+cost impact, safety impact, or time-saving impact. Be concrete, direct, \
+conversational. No preamble, no filler.
 
 Title: {title}
 Summary: {summary}
@@ -24,29 +28,68 @@ Summary: {summary}
 Return only the explanation."""
 
 
+NEWSLETTER_HEADLINE_PROMPT = """\
+Rewrite this newspaper-style headline into a newsletter-friendly headline.
+Make it conversational, impact-focused, and reader-centric.
+Instead of "Civic Groups Oppose Adani's Tunnel Road Project", prefer
+"Mumbai tunnel project may worsen Powai traffic during construction".
+Max 12 words. No clickbait. No quotes.
+
+Original: {title}
+
+Return only the rewritten headline."""
+
+
+TIGHTEN_SUMMARY_PROMPT = """\
+Tighten this news summary for a newsletter. Remove filler, keep only \
+facts that matter to a local reader. Max 2 sentences, ~25-30 words. \
+Start with the most impactful fact.
+
+Summary: {summary}
+
+Return only the tightened summary."""
+
+
 def fetch_clusters(cursor):
     return cursor.execute("""
         SELECT id, title, summary, article_count, entities, category, scope,
                recency_score, importance_score, created_at
         FROM article_clusters
-        WHERE title IS NOT NULL AND summary IS NOT NULL
+        WHERE title IS NOT NULL AND summary IS NOT NULL AND updated_at >= date('now', '-24 hours')
         ORDER BY created_at DESC
     """).fetchall()
 
 
-def generate_why_it_matters(title, summary):
+def llm_call(prompt, temperature=0.3):
+    """Single LLM call with error handling."""
     try:
         response = ollama.chat(
             model=MODEL,
-            messages=[{"role": "user", "content": WHY_IT_MATTERS_PROMPT.format(
-                title=title, summary=summary
-            )}],
-            options={"temperature": 0.3},
+            messages=[{"role": "user", "content": prompt}],
+            options={"temperature": temperature},
         )
+        print('############ ', MODEL, response)
         return response["message"]["content"].strip()
     except Exception:
-        logger.exception("Failed to generate why_it_matters for: %s", title)
-        return "May affect daily life, costs, travel or decisions."
+        logger.exception("LLM call failed")
+        return None
+
+
+def generate_why_it_matters(title, summary):
+    result = llm_call(WHY_IT_MATTERS_PROMPT.format(title=title, summary=summary))
+    return result or "May affect your daily routine, costs, or commute."
+
+
+def rewrite_headline_newsletter(title):
+    """Rewrite a newspaper headline into newsletter-friendly format."""
+    result = llm_call(NEWSLETTER_HEADLINE_PROMPT.format(title=title), temperature=0.4)
+    return result or title
+
+
+def tighten_summary(summary):
+    """Tighten a summary to ~25-30 words."""
+    result = llm_call(TIGHTEN_SUMMARY_PROMPT.format(summary=summary))
+    return result or summary
 
 
 def compute_cluster_score(cluster, section, template):
@@ -100,22 +143,101 @@ def diversify_clusters(clusters, section, template):
     return selected
 
 
-def format_cluster(cluster, section):
-    fmt = section.get("format", "short")
-    base = {"cluster_id": cluster["id"], "title": cluster["title"]}
+def is_newsletter_tone(template):
+    """Check if the template uses newsletter tone."""
+    return template.get("tone") == "newsletter"
 
+
+def maybe_rewrite(title, summary, template):
+    """Optionally rewrite headline and tighten summary for newsletter tone."""
+    if is_newsletter_tone(template):
+        return rewrite_headline_newsletter(title), tighten_summary(summary)
+    return title, summary
+
+
+def format_cluster(cluster, section, template):
+    """Format a cluster according to the section's format type."""
+    fmt = section.get("format", "short")
+    newsletter = is_newsletter_tone(template)
+
+    # Determine title/summary — optionally rewrite for newsletter tone
+    title = cluster["title"]
+    summary = cluster["summary"]
+    if newsletter and fmt not in ("alert_chip", "closing_brief"):
+        title, summary = maybe_rewrite(title, summary, template)
+
+    base = {"cluster_id": cluster["id"], "title": title}
+
+    # ── alert_chip: compact colored chip, title only ──────────────
+    if fmt == "alert_chip":
+        return {"type": "alert_chip", **base, "scope": cluster["scope"]}
+
+    # ── one_line: simple bullet ──────────────────────────────────
     if fmt == "one_line":
         return {"type": "one_line", **base}
 
+    # ── lead: dominant story with full summary + why_it_matters ──
+    if fmt == "lead":
+        return {
+            "type": "lead",
+            **base,
+            "summary": summary,
+            "why_it_matters": generate_why_it_matters(title, summary),
+        }
+
+    # ── explainer: title + brief + why_it_matters ────────────────
     if fmt == "explainer":
         return {
             "type": "explainer",
             **base,
-            "brief": cluster["summary"],
-            "why_it_matters": generate_why_it_matters(cluster["title"], cluster["summary"]),
+            "brief": summary,
+            "why_it_matters": generate_why_it_matters(title, summary),
         }
 
-    return {"type": "short", **base, "summary": cluster["summary"]}
+    # ── compact_brief: title + 1-line summary, no extras ────────
+    if fmt == "compact_brief":
+        return {"type": "compact_brief", **base, "summary": summary}
+
+    # ── closing_brief: ultra-compact for "Before You Go" ────────
+    if fmt == "closing_brief":
+        return {"type": "closing_brief", **base}
+
+    # ── short (default): title + summary ─────────────────────────
+    return {"type": "short", **base, "summary": summary}
+
+
+def format_mixed_section(clusters, section, template):
+    """Format a section with mixed format types (lead_plus_short, explainer_plus_compact)."""
+    fmt = section.get("format", "short")
+    items = []
+
+    if fmt == "lead_plus_short":
+        lead_count = section.get("lead_count", 1)
+        for i, c in enumerate(clusters):
+            if i < lead_count:
+                # Override format for lead item
+                override = dict(section, format="lead")
+                items.append(format_cluster(c, override, template))
+            else:
+                override = dict(section, format="short")
+                items.append(format_cluster(c, override, template))
+
+    elif fmt == "explainer_plus_compact":
+        explainer_count = section.get("explainer_count", 1)
+        for i, c in enumerate(clusters):
+            if i < explainer_count:
+                override = dict(section, format="explainer")
+                items.append(format_cluster(c, override, template))
+            else:
+                override = dict(section, format="compact_brief")
+                items.append(format_cluster(c, override, template))
+
+    else:
+        # Simple format — all items same type
+        for c in clusters:
+            items.append(format_cluster(c, section, template))
+
+    return items
 
 
 def build_section(section, clusters, template, selected_ids):
@@ -123,20 +245,25 @@ def build_section(section, clusters, template, selected_ids):
     ranked = rank_clusters(filtered, section, template)
     selected = diversify_clusters(ranked, section, template)
 
-    items = []
+    items = format_mixed_section(selected, section, template)
     for c in selected:
         selected_ids.add(c["id"])
-        items.append(format_cluster(c, section))
 
     if not items and not section.get("required", False):
         return None
 
-    return {
+    result = {
         "id": section["id"],
         "title": section["title"],
         "description": section.get("description"),
         "items": items,
     }
+
+    # Include scope_label for visual hierarchy on the website
+    if section.get("scope_label"):
+        result["scope_label"] = section["scope_label"]
+
+    return result
 
 
 def build_edition(template, clusters):
@@ -146,11 +273,17 @@ def build_edition(template, clusters):
         for s in template["sections"]
     ]))
 
-    return {
+    edition = {
         "title": template["title"],
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "sections": sections,
     }
+
+    # Include subtitle for newsletter tone
+    if template.get("subtitle"):
+        edition["subtitle"] = template["subtitle"]
+
+    return edition
 
 
 def save_news_edition(cursor, template, edition, cluster_ids):

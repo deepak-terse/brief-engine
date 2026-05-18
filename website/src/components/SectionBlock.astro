@@ -2,22 +2,29 @@
 import OneLineNewsItem from './OneLineNewsItem.astro';
 import ShortNewsItem from './ShortNewsItem.astro';
 import ExplainerNewsItem from './ExplainerNewsItem.astro';
+import AlertChipItem from './AlertChipItem.astro';
+import LeadNewsItem from './LeadNewsItem.astro';
+import CompactBriefItem from './CompactBriefItem.astro';
+import ClosingBriefItem from './ClosingBriefItem.astro';
 
 interface NewsItem {
-  type: 'one_line' | 'short' | 'explainer';
+  type: 'one_line' | 'short' | 'explainer' | 'alert_chip' | 'lead' | 'compact_brief' | 'closing_brief';
   title: string;
   summary?: string;
   brief?: string;
   why_it_matters?: string;
+  scope?: string;
 }
 
 interface Props {
   id: string;
   title: string;
+  description?: string;
+  scopeLabel?: string;
   items: NewsItem[];
 }
 
-const { id, title, items } = Astro.props;
+const { id, title, description, scopeLabel, items } = Astro.props;
 
 // Skip rendering if section has no items
 if (items.length === 0) return;
@@ -26,30 +33,90 @@ if (items.length === 0) return;
 const subtitles: Record<string, string> = {
   right_now: 'Immediate impact — traffic, weather, outages, safety',
   powai_pulse: 'Powai hyperlocal news',
+  around_powai: 'What\'s changing in your neighborhood',
   mumbai_moves: 'City-wide civic, transport, infrastructure',
+  mumbai_matters: 'City-level changes that affect your daily life',
   money_rules: 'Economy, policy, personal finance impact',
+  wallet_watch: 'Prices, policies, and what they cost you',
   beyond_city: 'National and global, explained locally',
+  india_briefing: 'National news, explained locally',
+  world_wire: 'Global stories worth 30 seconds',
+  before_you_go: 'Quick briefs, weather, commute watch',
 };
 
-const subtitle = subtitles[id] || '';
+const subtitle = description || subtitles[id] || '';
+
+// Scope-based visual hierarchy
+const scopeStyles: Record<string, { borderColor: string; labelBg: string; labelColor: string }> = {
+  'LIVE':     { borderColor: 'var(--color-tag-red)', labelBg: 'var(--color-tag-red-bg)', labelColor: 'var(--color-tag-red)' },
+  'LOCAL':    { borderColor: 'var(--color-navy)', labelBg: 'rgba(30,58,95,0.08)', labelColor: 'var(--color-navy)' },
+  'CITY':     { borderColor: 'var(--color-tag-blue)', labelBg: 'var(--color-tag-blue-bg)', labelColor: 'var(--color-tag-blue)' },
+  'MONEY':    { borderColor: '#b45309', labelBg: 'rgba(180,83,9,0.08)', labelColor: '#b45309' },
+  'NATIONAL': { borderColor: 'var(--color-ink-muted)', labelBg: 'rgba(107,114,128,0.08)', labelColor: 'var(--color-ink-muted)' },
+  'GLOBAL':   { borderColor: 'var(--color-ink-faint)', labelBg: 'rgba(156,163,175,0.08)', labelColor: 'var(--color-ink-faint)' },
+  'WRAP':     { borderColor: 'var(--color-tag-green)', labelBg: 'var(--color-tag-green-bg)', labelColor: 'var(--color-tag-green)' },
+};
+
+const scopeStyle = scopeLabel ? scopeStyles[scopeLabel] : null;
+const isAlertSection = items[0]?.type === 'alert_chip';
+const isClosingSection = id === 'before_you_go';
 ---
 
-<section class="container-reading py-8 fade-in" id={`section-${id}`} aria-labelledby={`heading-${id}`}>
-  <!-- Section heading with emoji -->
-  <h2 id={`heading-${id}`} class="mb-2" style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700;">
-    {title}
-  </h2>
-  <hr class="rule mb-5" />
+<section
+  class:list={[
+    'container-reading py-8 fade-in',
+    isClosingSection && 'closing-section',
+  ]}
+  id={`section-${id}`}
+  aria-labelledby={`heading-${id}`}
+>
+  <!-- Section heading with scope badge -->
+  <div class="section-header mb-2">
+    {scopeLabel && scopeStyle && (
+      <span
+        class="scope-badge"
+        style={`background: ${scopeStyle.labelBg}; color: ${scopeStyle.labelColor}; border: 1px solid ${scopeStyle.labelBg};`}
+      >
+        {scopeLabel}
+      </span>
+    )}
+    <h2
+      id={`heading-${id}`}
+      style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700;"
+    >
+      {title}
+    </h2>
+  </div>
+
+  <hr
+    class="rule mb-4"
+    style={scopeStyle ? `border-color: ${scopeStyle.borderColor};` : ''}
+  />
 
   <!-- Section subtitle -->
   {subtitle && (
-    <div class="mb-6">
+    <div class="mb-5">
       <p class="section-subtitle">{subtitle}</p>
     </div>
   )}
 
-  <div class="space-y-2">
+  <!-- Items container -->
+  <div class:list={[
+    isAlertSection ? 'alert-grid' : 'space-y-1',
+  ]}>
     {items.map((item) => {
+      if (item.type === 'alert_chip') {
+        return <AlertChipItem title={item.title} scope={item.scope} />;
+      }
+      if (item.type === 'lead') {
+        return (
+          <LeadNewsItem
+            title={item.title}
+            summary={item.summary}
+            whyItMatters={item.why_it_matters}
+          />
+        );
+      }
       if (item.type === 'one_line') {
         return <OneLineNewsItem title={item.title} />;
       }
@@ -65,7 +132,46 @@ const subtitle = subtitles[id] || '';
           />
         );
       }
+      if (item.type === 'compact_brief') {
+        return <CompactBriefItem title={item.title} summary={item.summary} />;
+      }
+      if (item.type === 'closing_brief') {
+        return <ClosingBriefItem title={item.title} />;
+      }
       return null;
     })}
   </div>
 </section>
+
+<style>
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .scope-badge {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .alert-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .closing-section {
+    background: var(--color-paper-warm);
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    padding-left: calc(var(--spacing-reading) + 0.5rem);
+    padding-right: calc(var(--spacing-reading) + 0.5rem);
+  }
+</style>

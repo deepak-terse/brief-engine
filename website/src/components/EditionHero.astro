@@ -5,9 +5,10 @@ interface Props {
   title: string;
   date: string;
   readTime: number;
+  subtitle?: string;
 }
 
-const { title, date, readTime } = Astro.props;
+const { title, date, readTime, subtitle } = Astro.props;
 
 // Format as "Saturday, May 16" style
 const d = new Date(date + 'T00:00:00');
@@ -32,9 +33,9 @@ const pillDate = d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric',
     {displayDate}
   </h1>
 
-  <!-- Subtitle -->
+  <!-- Subtitle — personalized greeting or default -->
   <p class="text-[1rem] text-[var(--color-ink-faint)] italic mb-8" style="font-family: var(--font-serif);">
-    The daily hyperlocal briefing for Powai, Mumbai.
+    {subtitle || 'The daily hyperlocal briefing for Powai, Mumbai.'}
   </p>
 
   <hr class="rule" />

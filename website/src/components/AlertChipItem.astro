@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  scope?: string;
+}
+
+const { title, scope } = Astro.props;
+
+// Color scheme per scope
+const chipColors: Record<string, { bg: string; border: string; dot: string }> = {
+  'Powai':  { bg: 'var(--color-tag-red-bg)', border: 'rgba(220,38,38,0.15)', dot: 'var(--color-tag-red)' },
+  'Mumbai': { bg: 'var(--color-tag-blue-bg)', border: 'rgba(37,99,235,0.15)', dot: 'var(--color-tag-blue)' },
+};
+
+const colors = chipColors[scope || ''] || chipColors['Mumbai'];
+---
+
+<div class="alert-chip" style={`background: ${colors.bg}; border-color: ${colors.border};`}>
+  <span class="alert-dot" style={`background: ${colors.dot};`} aria-hidden="true"></span>
+  <span class="alert-text">{title}</span>
+</div>
+
+<style>
+  .alert-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-ink);
+  }
+
+  .alert-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .alert-text {
+    flex: 1;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>

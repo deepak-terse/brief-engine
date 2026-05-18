@@ -8,10 +8,10 @@ from datetime import datetime, timezone
 import ollama
 
 from .database import get_connection
+from .model import MODEL
 
 logger = logging.getLogger(__name__)
 
-MODEL = "qwen3:8b"
 MAX_ARTICLES_PER_CLUSTER = 8
 
 VALID_CATEGORIES = [
@@ -24,8 +24,12 @@ VALID_SCOPES = ["Powai", "Mumbai", "India", "World"]
 PROMPT_TEMPLATE = """\
 You are a local news intelligence engine. Given articles about the SAME event:
 
-1. Write a short factual title (max 12 words).
-2. Write a concise neutral summary (2-3 sentences).
+1. Write a newsletter-style headline (max 12 words).
+   - Focus on READER IMPACT, not the event itself.
+   - Use conversational, direct language.
+2. Write a tight summary (2 sentences, max 30 words).
+   - Lead with how it affects a resident's commute, cost, safety, or daily routine.
+   - Be concrete and specific.
 3. Pick EXACTLY ONE category from: {categories}
 4. Pick EXACTLY ONE scope:
    - Powai → hyperlocal Powai issue/event
@@ -33,7 +37,8 @@ You are a local news intelligence engine. Given articles about the SAME event:
    - India → national relevance
    - World → international relevance
 
-Rules: merge overlaps, no clickbait, confirmed facts only, mention key people/places/companies, no sources.
+Rules: merge overlaps, no clickbait, confirmed facts only, mention key \
+people/places/companies, no sources. Prefer Powai scope when plausible.
 
 Return valid JSON only:
 {{"title": "string", "summary": "string", "category": "string", "scope": "string"}}

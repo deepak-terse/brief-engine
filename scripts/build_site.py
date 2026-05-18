@@ -93,6 +93,13 @@ def format_section_yaml(section: dict, indent: int = 2) -> str:
 
     lines.append(f"{prefix}- id: {yaml_escape(section['id'])}")
     lines.append(f"{prefix}  title: {yaml_escape(section['title'])}")
+
+    if section.get("description"):
+        lines.append(f"{prefix}  description: {yaml_escape(section['description'])}")
+
+    if section.get("scope_label"):
+        lines.append(f"{prefix}  scope_label: {yaml_escape(section['scope_label'])}")
+
     lines.append(f"{prefix}  items:")
 
     for item in section.get("items", []):
@@ -107,6 +114,9 @@ def format_section_yaml(section: dict, indent: int = 2) -> str:
 
         if item.get("why_it_matters"):
             lines.append(f"{item_prefix}  why_it_matters: {yaml_escape(item['why_it_matters'])}")
+
+        if item.get("scope"):
+            lines.append(f"{item_prefix}  scope: {yaml_escape(item['scope'])}")
 
     return "\n".join(lines)
 
@@ -127,6 +137,7 @@ def brief_to_markdown(brief: dict) -> str:
 
     edition_key = brief["edition_key"]
     title = content.get("title", brief["title"])
+    subtitle = content.get("subtitle", "")
     read_time = brief.get("read_time_minutes", 5)
 
     # Filter out sections with no items
@@ -136,11 +147,17 @@ def brief_to_markdown(brief: dict) -> str:
     lines = [
         "---",
         f"title: {yaml_escape(title)}",
+    ]
+
+    if subtitle:
+        lines.append(f"subtitle: {yaml_escape(subtitle)}")
+
+    lines.extend([
         f"date: {yaml_escape(date_str)}",
         f"readTime: {read_time}",
         f"editionKey: {yaml_escape(edition_key)}",
         "sections:",
-    ]
+    ])
 
     for section in sections:
         lines.append(format_section_yaml(section))

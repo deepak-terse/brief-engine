@@ -1,0 +1,74 @@
+---
+interface Props {
+  title: string;
+  summary?: string;
+  whyItMatters?: string;
+}
+
+const { title, summary, whyItMatters } = Astro.props;
+---
+
+<article class="lead-story">
+  <h3 class="lead-title">{title}</h3>
+
+  {summary && (
+    <p class="lead-summary">{summary}</p>
+  )}
+
+  {whyItMatters && (
+    <div class="lead-impact">
+      <span class="impact-label">YOUR IMPACT</span>
+      <p class="impact-text">{whyItMatters}</p>
+    </div>
+  )}
+</article>
+
+<style>
+  .lead-story {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-rule-light);
+  }
+
+  .lead-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 1.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .lead-summary {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .lead-impact {
+    background: var(--color-paper-warm);
+    border-left: 3px solid var(--color-navy);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .impact-label {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-navy);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .impact-text {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-ink-light);
+  }
+</style>

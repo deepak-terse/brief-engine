@@ -15,18 +15,12 @@ from .enricher import embedding_from_blob
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class UnclusteredArticle:
     id: int
     category: str | None
     entities: list[str]
     embedding: np.ndarray
-
-
-# ---------------------------------------------------------------------------
-# DB helpers
-# ---------------------------------------------------------------------------
 
 def fetch_unclustered_articles(conn: sqlite3.Connection) -> list[UnclusteredArticle]:
     rows = conn.execute(
@@ -93,11 +87,6 @@ def assign_cluster_to_articles(
         [cluster_id, *article_ids],
     )
 
-
-# ---------------------------------------------------------------------------
-# Clustering helpers
-# ---------------------------------------------------------------------------
-
 def _merge_entities(articles: list[UnclusteredArticle]) -> dict[str, int]:
     counter: Counter[str] = Counter()
     for a in articles:
@@ -129,11 +118,6 @@ def _cluster_groups(articles: list[UnclusteredArticle]) -> dict[int, list[Unclus
     for label, article in zip(labels, articles):
         groups.setdefault(int(label), []).append(article)
     return groups
-
-
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 
 def cluster_articles() -> dict[str, int]:
     conn = get_connection()

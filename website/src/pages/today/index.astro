@@ -33,17 +33,34 @@ const secondHalf = data.sections.slice(midPoint);
   readTime={data.readTime}
   description={`${data.title} — Your ${data.readTime}-minute morning brief for Powai & Mumbai.`}
 >
-  <EditionHero title={data.title} date={data.date} readTime={data.readTime} />
+  <EditionHero
+    title={data.title}
+    date={data.date}
+    readTime={data.readTime}
+    subtitle={data.subtitle}
+  />
 
   {firstHalf.map((section) => (
-    <SectionBlock id={section.id} title={section.title} items={section.items} />
+    <SectionBlock
+      id={section.id}
+      title={section.title}
+      description={section.description}
+      scopeLabel={section.scope_label}
+      items={section.items}
+    />
   ))}
 
   <!-- Mid-page subscribe card -->
   <SubscribeCard />
 
   {secondHalf.map((section) => (
-    <SectionBlock id={section.id} title={section.title} items={section.items} />
+    <SectionBlock
+      id={section.id}
+      title={section.title}
+      description={section.description}
+      scopeLabel={section.scope_label}
+      items={section.items}
+    />
   ))}
 
   <!-- End of edition marker -->

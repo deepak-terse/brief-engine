@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<article class="closing-item">
+  <span class="closing-check" aria-hidden="true">✓</span>
+  <span class="closing-text">{title}</span>
+</article>
+
+<style>
+  .closing-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+  }
+
+  .closing-check {
+    color: var(--color-tag-green);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .closing-text {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-ink-light);
+    line-height: 1.5;
+  }
+</style>

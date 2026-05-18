@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  summary?: string;
+}
+
+const { title, summary } = Astro.props;
+---
+
+<article class="compact-brief">
+  <span class="compact-dot" aria-hidden="true">›</span>
+  <div>
+    <span class="compact-title">{title}</span>
+    {summary && (
+      <span class="compact-summary"> — {summary}</span>
+    )}
+  </div>
+</article>
+
+<style>
+  .compact-brief {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .compact-dot {
+    color: var(--color-ink-faint);
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .compact-title {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    line-height: 1.5;
+  }
+
+  .compact-summary {
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    color: var(--color-ink-muted);
+    line-height: 1.5;
+  }
+</style>
