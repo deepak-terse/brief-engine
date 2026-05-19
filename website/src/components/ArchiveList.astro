@@ -1,4 +1,6 @@
 ---
+import { formatDisplayDate, formatPillDate } from '../utils/date';
+
 interface Edition {
   id: string;
   data: {
@@ -18,18 +20,6 @@ const { editions } = Astro.props;
 function editionHref(edition: Edition): string {
   return `/${edition.id}`;
 }
-
-function formatArchiveDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-}
-
-function formatDisplayDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  const day = d.toLocaleDateString('en-IN', { weekday: 'long' });
-  const monthDay = d.toLocaleDateString('en-IN', { month: 'long', day: 'numeric' });
-  return `${day}, ${monthDay}`;
-}
 ---
 
 <div class="space-y-4" id="archive-list">
@@ -48,7 +38,7 @@ function formatDisplayDate(dateStr: string): string {
         <div class="flex items-center gap-3 mb-2">
           <span class="meta-text flex items-center gap-1.5">
             <span aria-hidden="true">📅</span>
-            {formatArchiveDate(edition.data.date)}
+            {formatPillDate(edition.data.date)}
           </span>
           <span class="meta-text">•</span>
           <span class="meta-text flex items-center gap-1.5">

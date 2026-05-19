@@ -7,10 +7,9 @@ interface Props {
   title: string;
   description?: string;
   date?: string;
-  readTime?: number;
 }
 
-const { title, description, date, readTime } = Astro.props;
+const { title, description, date } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description} date={date}>

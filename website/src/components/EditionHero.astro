@@ -1,5 +1,5 @@
 ---
-import { formatDate } from '../utils/date';
+import { formatDisplayDate, formatPillDate } from '../utils/date';
 
 interface Props {
   title: string;
@@ -10,14 +10,8 @@ interface Props {
 
 const { title, date, readTime, subtitle } = Astro.props;
 
-// Format as "Saturday, May 16" style
-const d = new Date(date + 'T00:00:00');
-const dayName = d.toLocaleDateString('en-IN', { weekday: 'long' });
-const monthDay = d.toLocaleDateString('en-IN', { month: 'long', day: 'numeric' });
-const displayDate = `${dayName}, ${monthDay}`;
-
-// Format for pill: "MAY 16, 2026"
-const pillDate = d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+const displayDate = formatDisplayDate(date);
+const pillDate = formatPillDate(date);
 ---
 
 <section class="container-reading pt-12 pb-8 text-center fade-in" id="edition-hero">
