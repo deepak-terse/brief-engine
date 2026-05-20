@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 def main():
 	"""Main pipeline orchestrator."""
 	logger.info("Starting brief-engine pipeline...")
-	# init_database()
-	# init_model()
-	# fetch_and_store()
-	# enrich_unenriched_articles()
-	# cluster_articles()
-	# enrich_clusters()
+	init_database()
+	init_model()
+	fetch_and_store()
+	enrich_unenriched_articles()
+	cluster_articles()
+	enrich_clusters()
 	generate_brief()
 	logger.info("Pipeline completed successfully")
 
