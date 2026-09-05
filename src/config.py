@@ -41,7 +41,7 @@ RSS_FEEDS = [
   {"id": 11, "articleSourceId": 3, "category": CATEGORIES["TOP"], "scope": SCOPES["WORLD"], "url": "https://www.thehindu.com/news/international/feeder/default.rss"}
 ]
 
-DEFAULT_POLLING_INTERVAL = 1440  # in minutes (24 hours)
+DEFAULT_POLLING_INTERVAL = 1440 # in minutes(24 hours)
 FRESHNESS_DAYS = 2
 SPACY_MODEL = "en_core_web_sm"
 SENTENCE_MODEL = "all-MiniLM-L6-v2"
@@ -49,9 +49,9 @@ TARGET_LABELS = {"PERSON", "ORG", "GPE", "LOC", "EVENT", "PRODUCT"}
 CLUSTER_DISTANCE_THRESHOLD = 0.55
 
 BRIEF_TEMPLATES = [
-  # ──────────────────────────────────────────────────────────────────
-  # Template 1: Original morning edition (kept for backward compat)
-  # ──────────────────────────────────────────────────────────────────
+  #──────────────────────────────────────────────────────────────────
+  # Template 1: Original morning edition(kept for backward compat)
+  #────────────────────────────────────────────────────────────────── 
   {
     "name": "powai_morning_edition",
     "title": "Today in Powai & Mumbai",
@@ -213,249 +213,248 @@ BRIEF_TEMPLATES = [
       }
     ]
   },
-    {
-        "name": "powai_pulse",
-        "title": "Powai Pulse",
-        "subtitle": "Hyperlocal news for Powai residents in under 5 minutes.",
-        "max_read_time_minutes": 5,
+  {
+    "name": "powai_pulse",
+    "title": "Powai Pulse",
+    "subtitle": "Hyperlocal news for Powai residents in under 5 minutes.",
+    "max_read_time_minutes": 5,
 
-        "selection": {
-            "max_total_items": 18,
-            "dedupe_categories_per_section": 2,
-            "min_importance_score": 0.35,
-            "min_recency_score": 0.25
+    "selection": {
+      "max_total_items": 18,
+      "dedupe_categories_per_section": 2,
+      "min_importance_score": 0.35,
+      "min_recency_score": 0.25
+    },
+
+    "scope_priority": {
+      "Powai": 1.0,
+      "Mumbai": 0.82,
+      "Maharashtra": 0.58,
+      "India": 0.42,
+      "World": 0.22
+    },
+
+    "sections": [{
+        "id": "heads_up",
+        "title": "🚨 Heads Up",
+        "description": "Immediate impact — traffic, outages, safety",
+        "format": "lead_alert_plus_briefs",
+
+        "lead_count": 1,
+        "brief_count": 1,
+        "required": True,
+
+        "sort": {
+          "importance": 0.6,
+          "recency": 0.4
         },
 
-        "scope_priority": {
-            "Powai": 1.0,
-            "Mumbai": 0.82,
-            "Maharashtra": 0.58,
-            "India": 0.42,
-            "World": 0.22
+        "filters": {
+          "scope": ["Powai", "Mumbai"],
+          "category": [
+            "Transport",
+            "Safety",
+            "Weather",
+            "Infra"
+          ],
+          "min_importance_score": 0.4
         },
 
-        "sections": [
-            {
-                "id": "heads_up",
-                "title": "🚨 Heads Up",
-                "description": "Immediate impact — traffic, outages, safety",
-                "format": "lead_alert_plus_briefs",
+        "card_rules": {
+          "lead_story_requires_full_summary": True,
+          "brief_story_format": "headline_plus_tags_only"
+        }
+      },
 
-                "lead_count": 1,
-                "brief_count": 1,
-                "required": True,
+      {
+        "id": "ground_zero",
+        "title": "📍 Ground Zero",
+        "description": "Powai hyperlocal news",
+        "format": "lead_plus_briefs",
 
-                "sort": {
-                    "importance": 0.6,
-                    "recency": 0.4
-                },
+        "lead_count": 1,
+        "brief_count": 2,
+        "required": True,
 
-                "filters": {
-                    "scope": ["Powai", "Mumbai"],
-                    "category": [
-                        "Transport",
-                        "Safety",
-                        "Weather",
-                        "Infra"
-                    ],
-                    "min_importance_score": 0.4
-                },
+        "sort": {
+          "importance": 0.5,
+          "recency": 0.3,
+          "scope": 0.2
+        },
 
-                "card_rules": {
-                    "lead_story_requires_full_summary": True,
-                    "brief_story_format": "headline_plus_tags_only"
-                }
-            },
+        "filters": {
+          "scope": ["Powai"],
+          "category": [
+            "Infra",
+            "Transport",
+            "Safety",
+            "Community",
+            "Environment",
+            "Healthcare",
+            "Education",
+            "Lifestyle"
+          ]
+        },
 
-            {
-                "id": "ground_zero",
-                "title": "📍 Ground Zero",
-                "description": "Powai hyperlocal news",
-                "format": "lead_plus_briefs",
+        "card_rules": {
+          "lead_story_requires_why_it_matters": True,
+          "brief_story_format": "headline_plus_tags_only"
+        }
+      },
 
-                "lead_count": 1,
-                "brief_count": 2,
-                "required": True,
+      {
+        "id": "mumbai_matters",
+        "title": "🏙️ Mumbai Matters",
+        "description": "City-wide civic and infrastructure updates",
+        "format": "lead_plus_briefs",
 
-                "sort": {
-                    "importance": 0.5,
-                    "recency": 0.3,
-                    "scope": 0.2
-                },
+        "lead_count": 1,
+        "brief_count": 3,
+        "required": True,
 
-                "filters": {
-                    "scope": ["Powai"],
-                    "category": [
-                        "Infra",
-                        "Transport",
-                        "Safety",
-                        "Community",
-                        "Environment",
-                        "Healthcare",
-                        "Education",
-                        "Lifestyle"
-                    ]
-                },
+        "sort": {
+          "importance": 0.5,
+          "recency": 0.3,
+          "scope": 0.2
+        },
 
-                "card_rules": {
-                    "lead_story_requires_why_it_matters": True,
-                    "brief_story_format": "headline_plus_tags_only"
-                }
-            },
+        "filters": {
+          "scope": ["Mumbai"],
+          "category": [
+            "Transport",
+            "Infra",
+            "Politics",
+            "Healthcare",
+            "Environment",
+            "Safety"
+          ]
+        },
 
-            {
-                "id": "mumbai_matters",
-                "title": "🏙️ Mumbai Matters",
-                "description": "City-wide civic and infrastructure updates",
-                "format": "lead_plus_briefs",
+        "card_rules": {
+          "lead_story_requires_full_summary": True,
+          "lead_story_requires_why_it_matters": True,
+          "brief_story_format": "headline_plus_tags_only"
+        }
+      },
 
-                "lead_count": 1,
-                "brief_count": 3,
-                "required": True,
+      {
+        "id": "wallet_watch",
+        "title": "💸 Wallet Watch",
+        "description": "Fuel, inflation, EMIs, real estate, jobs",
+        "format": "lead_plus_briefs",
 
-                "sort": {
-                    "importance": 0.5,
-                    "recency": 0.3,
-                    "scope": 0.2
-                },
+        "lead_count": 1,
+        "brief_count": 2,
+        "required": True,
 
-                "filters": {
-                    "scope": ["Mumbai"],
-                    "category": [
-                        "Transport",
-                        "Infra",
-                        "Politics",
-                        "Healthcare",
-                        "Environment",
-                        "Safety"
-                    ]
-                },
+        "sort": {
+          "importance": 0.72,
+          "recency": 0.28
+        },
 
-                "card_rules": {
-                    "lead_story_requires_full_summary": True,
-                    "lead_story_requires_why_it_matters": True,
-                    "brief_story_format": "headline_plus_tags_only"
-                }
-            },
+        "filters": {
+          "scope": [
+            "Mumbai",
+            "India",
+            "World"
+          ],
+          "category": [
+            "Business"
+          ],
+          "min_importance_score": 0.5
+        },
 
-            {
-                "id": "wallet_watch",
-                "title": "💸 Wallet Watch",
-                "description": "Fuel, inflation, EMIs, real estate, jobs",
-                "format": "lead_plus_briefs",
+        "card_rules": {
+          "every_lead_requires_cost_implication": True
+        }
+      },
 
-                "lead_count": 1,
-                "brief_count": 2,
-                "required": True,
+      {
+        "id": "policy_radar",
+        "title": "🏛️ Policy Radar",
+        "description": "Government decisions and civic policy",
+        "format": "lead_plus_briefs",
 
-                "sort": {
-                    "importance": 0.72,
-                    "recency": 0.28
-                },
+        "lead_count": 1,
+        "brief_count": 2,
+        "required": True,
 
-                "filters": {
-                    "scope": [
-                        "Mumbai",
-                        "India",
-                        "World"
-                    ],
-                    "category": [
-                        "Business"
-                    ],
-                    "min_importance_score": 0.5
-                },
+        "sort": {
+          "importance": 0.7,
+          "recency": 0.3
+        },
 
-                "card_rules": {
-                    "every_lead_requires_cost_implication": True
-                }
-            },
+        "filters": {
+          "scope": [
+            "Maharashtra",
+            "India"
+          ],
+          "category": [
+            "Politics"
+          ],
+          "min_importance_score": 0.5
+        },
 
-            {
-                "id": "policy_radar",
-                "title": "🏛️ Policy Radar",
-                "description": "Government decisions and civic policy",
-                "format": "lead_plus_briefs",
+        "card_rules": {
+          "lead_story_requires_why_it_matters": True
+        }
+      },
 
-                "lead_count": 1,
-                "brief_count": 2,
-                "required": True,
+      {
+        "id": "nation_scan",
+        "title": "🇮🇳 Nation Scan",
+        "description": "National news filtered for relevance",
+        "format": "compact_briefs",
 
-                "sort": {
-                    "importance": 0.7,
-                    "recency": 0.3
-                },
+        "limit": 2,
+        "required": True,
 
-                "filters": {
-                    "scope": [
-                        "Maharashtra",
-                        "India"
-                    ],
-                    "category": [
-                        "Politics"
-                    ],
-                    "min_importance_score": 0.5
-                },
+        "sort": {
+          "importance": 0.7,
+          "recency": 0.3
+        },
 
-                "card_rules": {
-                    "lead_story_requires_why_it_matters": True
-                }
-            },
+        "filters": {
+          "scope": ["India"],
+          "category": [
+            "Politics",
+            "Business",
+            "Environment",
+            "Healthcare",
+            "Sports"
+          ]
+        }
+      },
 
-            {
-                "id": "nation_scan",
-                "title": "🇮🇳 Nation Scan",
-                "description": "National news filtered for relevance",
-                "format": "compact_briefs",
+      {
+        "id": "world_wire",
+        "title": "🌐 World Wire",
+        "description": "Global news with India impact",
+        "format": "lead_plus_briefs",
 
-                "limit": 2,
-                "required": True,
+        "lead_count": 2,
+        "brief_count": 0,
+        "required": True,
 
-                "sort": {
-                    "importance": 0.7,
-                    "recency": 0.3
-                },
+        "sort": {
+          "importance": 0.9,
+          "recency": 0.1
+        },
 
-                "filters": {
-                    "scope": ["India"],
-                    "category": [
-                        "Politics",
-                        "Business",
-                        "Environment",
-                        "Healthcare",
-                        "Sports"
-                    ]
-                }
-            },
+        "filters": {
+          "scope": ["World"],
+          "category": [
+            "Politics",
+            "Business",
+            "Environment",
+            "Healthcare"
+          ]
+        },
 
-            {
-                "id": "world_wire",
-                "title": "🌐 World Wire",
-                "description": "Global news with India impact",
-                "format": "lead_plus_briefs",
-
-                "lead_count": 2,
-                "brief_count": 0,
-                "required": True,
-
-                "sort": {
-                    "importance": 0.9,
-                    "recency": 0.1
-                },
-
-                "filters": {
-                    "scope": ["World"],
-                    "category": [
-                        "Politics",
-                        "Business",
-                        "Environment",
-                        "Healthcare"
-                    ]
-                },
-
-                "card_rules": {
-                    "every_story_requires_india_impact": True
-                }
-            }
-        ]
-    }
+        "card_rules": {
+          "every_story_requires_india_impact": True
+        }
+      }
+    ]
+  }
 ]

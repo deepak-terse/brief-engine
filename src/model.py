@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 MODEL = "qwen3:8b-q4_K_M"
 
-
 def init_model() -> bool:
     """Pull model if needed and warm it up."""
     try:
