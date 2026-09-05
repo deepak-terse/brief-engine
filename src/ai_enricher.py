@@ -1,10 +1,11 @@
+from src.utils import log_time
 import json
 import logging
 import math
 import sqlite3
 import time
 from datetime import datetime, timezone
-
+import re
 import ollama
 
 from .database import get_connection
@@ -40,7 +41,7 @@ You are a local news intelligence engine. Given articles about the SAME event:
 Rules: merge overlaps, no clickbait, confirmed facts only, mention key \
 people/places/companies, no sources. Prefer Powai scope when plausible.
 
-Return valid JSON only:
+No markdown, no code fences. Return valid JSON only:
 {{"title": "string", "summary": "string", "category": "string", "scope": "string"}}
 
 Articles:
@@ -81,8 +82,17 @@ def generate_cluster_metadata(articles_text):
         options={"temperature": 0.1},
     )
 
+
+    content = response["message"]["content"].strip()
+    content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.DOTALL)
+    result = json.loads(content)
+
+    print('################ response : ' , response['message']['content'])
     try:
-        result = json.loads(response["message"]["content"].strip())
+        # result = json.loads(response["message"]["content"].strip())
+        content = response["message"]["content"].strip()
+        content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.DOTALL)
+        result = json.loads(content)
         return {
             "title": result.get("title", "").strip(),
             "summary": result.get("summary", "").strip(),
@@ -114,7 +124,7 @@ def compute_importance_score(article_count, recency_score, unique_source_count):
         3,
     )
 
-
+@log_time
 def enrich_clusters():
     logger.info("Starting AI cluster enrichment")
     conn = get_connection()
@@ -132,9 +142,10 @@ def enrich_clusters():
         logger.info("Found %d clusters to enrich.", total)
 
         for i, cluster in enumerate(clusters, 1):
+            if i == 11:
+                break
             cluster_id = cluster["id"]
             t0 = time.time()
-
             try:
                 logger.info("[%d/%d] Enriching cluster %s...", i, total, cluster_id)
 
@@ -155,16 +166,16 @@ def enrich_clusters():
                     len({a["article_source_id"] for a in articles}),
                 )
 
-                cursor.execute("""
-                    UPDATE article_clusters
-                    SET title = ?, summary = ?, category = ?, scope = ?,
-                        article_count = ?, recency_score = ?, importance_score = ?,
-                        updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
-                    WHERE id = ?
-                """, (
-                    result["title"], result["summary"], result["category"], result["scope"],
-                    len(articles), recency_score, importance_score, cluster_id,
-                ))
+                # cursor.execute("""
+                #     UPDATE article_clusters
+                #     SET title = ?, summary = ?, category = ?, scope = ?,
+                #         article_count = ?, recency_score = ?, importance_score = ?,
+                #         updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+                #     WHERE id = ?
+                # """, (
+                #     result["title"], result["summary"], result["category"], result["scope"],
+                #     len(articles), recency_score, importance_score, cluster_id,
+                # ))
 
                 conn.commit()
                 logger.info(

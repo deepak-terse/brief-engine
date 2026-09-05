@@ -26,6 +26,22 @@
     }
     h1, h2 { margin: 0 0 8px 0; }
     .muted { color: var(--muted); }
+    .run-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin: 12px 0 20px;
+      font-size: 14px;
+    }
+    .run-summary .stat { display: flex; flex-direction: column; gap: 2px; }
+    .run-summary .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; }
+    .run-summary .stat-value { font-size: 22px; font-weight: 700; color: #f1f5f9; }
+    .run-summary .divider { width: 1px; height: 40px; background: #334155; }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -154,6 +170,9 @@
 <body>
   <h1>Cluster Benchmark Report</h1>
   <p class="muted" id="meta"></p>
+
+  <div class="run-summary" id="run-summary"></div>
+
   <div class="card" id="summary" style="margin: 12px 0 20px;"></div>
 
   <div class="grid" id="kpis"></div>
@@ -184,11 +203,35 @@
     }
 
     document.getElementById("meta").textContent =
-      `Generated: ${report.generated_at} | Baseline: ${report.baseline_generated_at}`;
+      `Generated: ${report.generated_at} | Baseline snapshot: ${report.baseline_generated_at}`;
 
     const aggregate = report.aggregate || {};
     const categories = report.categories || {};
     const details = document.getElementById("details");
+
+    // ── Run summary ribbon ─────────────────────────────────────────────────
+    (function () {
+      const stats = [
+        { label: "Total Articles",      value: aggregate.total_article_count ?? "—" },
+        { label: "Baseline Clusters",   value: aggregate.baseline_cluster_count ?? "—" },
+        { label: "Predicted Clusters",  value: aggregate.predicted_cluster_count ?? "—" },
+        { label: "Categories",          value: aggregate.category_count ?? "—" },
+        { label: "Run Time",            value: sec(report.runtime_seconds) },
+        { label: "Distance Threshold",  value: report.cluster_distance_threshold ?? "—" },
+      ];
+      const el = document.getElementById("run-summary");
+      stats.forEach(({ label, value }, i) => {
+        if (i > 0) {
+          const div = document.createElement("div");
+          div.className = "divider";
+          el.appendChild(div);
+        }
+        const stat = document.createElement("div");
+        stat.className = "stat";
+        stat.innerHTML = `<span class="stat-label">${label}</span><span class="stat-value">${value}</span>`;
+        el.appendChild(stat);
+      });
+    })();
 
     // ── KPI cards ──────────────────────────────────────────────────────────
     const kpiDefs = [
@@ -324,6 +367,7 @@
     document.getElementById("metrics-head").innerHTML = `
       <tr>
         <th>Category</th>
+        <th><span class="th-help">Articles <span class="help-wrap"><span class="help-icon">i</span><span class="help-tip">Unique article titles in the baseline for this category / matched in predicted clusters.</span></span></span></th>
         <th><span class="th-help">Pairwise F1 <span class="help-wrap"><span class="help-icon">i</span><span class="help-tip">Harmonic mean of pairwise precision and recall. Higher is better. Measures how well article co-cluster groupings are preserved.</span></span></span></th>
         <th><span class="th-help">Pair Precision <span class="help-wrap"><span class="help-icon">i</span><span class="help-tip">Fraction of predicted co-cluster pairs that also appear in the baseline.</span></span></span></th>
         <th><span class="th-help">Pair Recall <span class="help-wrap"><span class="help-icon">i</span><span class="help-tip">Fraction of baseline co-cluster pairs that were successfully reproduced.</span></span></span></th>
@@ -341,6 +385,7 @@
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><strong>${code}</strong></td>
+        <td>${c.baseline_article_count ?? 0} / ${c.predicted_article_count ?? 0}</td>
         <td>
           <div>${pct(c.pairwise_f1 || 0)}</div>
           <div class="bar"><div class="fill" style="width:${Math.max(0, Math.min(100, (c.pairwise_f1 || 0)*100))}%"></div></div>
@@ -361,6 +406,8 @@
       section.innerHTML = `
         <h3>${code}</h3>
         <div class="tags">
+          <span class="tag">Articles (baseline): ${c.baseline_article_count ?? 0}</span>
+          <span class="tag">Articles (predicted): ${c.predicted_article_count ?? 0}</span>
           <span class="tag ${scoreClass(c.pairwise_f1 || 0)}">Pairwise F1: ${pct(c.pairwise_f1 || 0)}</span>
           <span class="tag">Pair Precision: ${pct(c.pairwise_precision || 0)}</span>
           <span class="tag">Pair Recall: ${pct(c.pairwise_recall || 0)}</span>

@@ -1,3 +1,4 @@
+from src.utils import log_time
 import json
 import logging
 import sqlite3
@@ -160,6 +161,7 @@ def save_edition(cursor, template, edition, cluster_ids):
         template.get("max_read_time_minutes", 5),
     ))
 
+@log_time
 def generate_brief():
     logger.info("Starting news edition generation")
     conn = get_connection()

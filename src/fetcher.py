@@ -1,5 +1,6 @@
 """RSS article fetching and database storage module."""
 
+from src.utils import log_time
 import logging
 import re
 import sqlite3
@@ -125,6 +126,7 @@ def insert_articles_batch(articles: list[dict]) -> int:
 
 	return inserted_count
 
+@log_time
 def fetch_and_store() -> dict:
 	logger.info("Starting RSS fetch and store pipeline...")
 	articles = fetch_rss_feeds()

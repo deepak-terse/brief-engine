@@ -1,13 +1,15 @@
 """Minimal Ollama model initialization."""
 
+from src.utils import log_time
 import logging
 import ollama
 
 logger = logging.getLogger(__name__)
 
 MODEL = "qwen3:8b-q4_K_M"
+# MODEL = "qwen2.5:3b-instruct"
 
-
+@log_time
 def init_model() -> bool:
     """Pull model if needed and warm it up."""
     try:

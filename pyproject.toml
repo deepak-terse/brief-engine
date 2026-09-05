@@ -19,6 +19,8 @@ dependencies = [
 [project.scripts]
 start = "src.main:main"
 publish = "scripts.build_site:main"
+benchmark = "scripts.run_benchmark:main"
+setup-baseline = "scripts.setup_baseline:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src", "scripts"]

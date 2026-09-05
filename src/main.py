@@ -7,7 +7,7 @@ from .database import init_database
 from .model import init_model
 from .enricher import enrich_unenriched_articles
 from .fetcher import fetch_and_store
-from .ai_enricher import enrich_clusters
+from .ai_enricher2 import enrich_clusters
 from .brief_generator import generate_brief
 
 logging.basicConfig(
@@ -25,7 +25,7 @@ def main():
 	enrich_unenriched_articles()
 	cluster_articles()
 	enrich_clusters()
-	generate_brief()
+	# generate_brief()
 	logger.info("Pipeline completed successfully")
 
 if __name__ == "__main__":

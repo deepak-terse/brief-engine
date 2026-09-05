@@ -8,6 +8,7 @@ Pipeline per article:
 """
 
 from __future__ import annotations
+from src.utils import log_time
 
 import json
 import logging
@@ -104,6 +105,7 @@ def update_enriched_articles(conn: sqlite3.Connection, articles: Iterable[Articl
     conn.executemany("UPDATE articles SET entities=?, signature=?, embedding=? WHERE id=?", updates)
     return len(updates)
 
+@log_time
 def enrich_unenriched_articles(batch_size: int = 50) -> dict[str, int]:
     conn = get_connection()
     total_found = total_enriched = 0

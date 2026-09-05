@@ -1,4 +1,5 @@
 from __future__ import annotations
+from src.utils import log_time
 
 import json
 import logging
@@ -119,6 +120,7 @@ def _cluster_groups(articles: list[UnclusteredArticle]) -> dict[int, list[Unclus
         groups.setdefault(int(label), []).append(article)
     return groups
 
+@log_time
 def cluster_articles() -> dict[str, int]:
     conn = get_connection()
     clusters_created = articles_assigned = 0

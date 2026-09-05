@@ -37,9 +37,9 @@ from src.clustering import _cluster_groups, UnclusteredArticle
 import numpy as np
 
 DEFAULT_BASELINE_DIR = PROJECT_ROOT / "benchmarks" / "fixtures" / "cluster_baseline"
-DEFAULT_REPORT_PATH = DEFAULT_BASELINE_DIR / "benchmark_report.json"
-DEFAULT_HTML_REPORT_PATH = DEFAULT_BASELINE_DIR / "benchmark_report.html"
-DEFAULT_HTML_TEMPLATE_PATH = Path(__file__).resolve().parent / "templates" / "cluster_benchmark_report.html"
+DEFAULT_REPORT_PATH = PROJECT_ROOT / "benchmarks" / "benchmark_report.json"
+DEFAULT_HTML_REPORT_PATH = PROJECT_ROOT / "benchmarks" / "benchmark_report.html"
+DEFAULT_HTML_TEMPLATE_PATH = PROJECT_ROOT / "benchmarks" / "templates" / "cluster_benchmark_report.html"
 
 
 # ── title normalisation ───────────────────────────────────────────────────────
@@ -57,6 +57,8 @@ def _load_baseline(baseline_dir: Path) -> dict[str, Any]:
         path = baseline_dir / "clusters" / f"{entry['id']}.json"
         clusters.append(json.loads(path.read_text(encoding="utf-8")))
     manifest["clusters"] = clusters
+    # Normalise: ensure every cluster has a generated_at timestamp for display
+    manifest.setdefault("generated_at", "unknown")
     return manifest
 
 
@@ -83,13 +85,20 @@ def _embed_titles(titles: list[str]) -> list[np.ndarray]:
 
 
 def _build_titled_articles(baseline_clusters: list[dict]) -> list[_TitledArticle]:
-    """Collect all unique article titles from baseline, embed them, return as articles."""
+    """Collect all unique article titles from baseline, embed them, return as articles.
+
+    Works with both the old DB-style schema (members have id/category) and the new
+    RSS schema (members have only title).
+    """
     seen_keys: set[str] = set()
-    rows: list[tuple[int, str, str | None, list[str]]] = []  # (original_id, title, category, entities)
+    # (synthetic_id, title, category, entities)
+    rows: list[tuple[int, str, str | None, list[str]]] = []
+    synthetic_id = 0
 
     for bc in baseline_clusters:
-        cat = bc.get("category")
-        entities = bc.get("top_entities") or []
+        # RSS clusters have no category/entities; DB clusters do — handle both
+        cat: str | None = bc.get("category") or None
+        entities: list[str] = bc.get("top_entities") or []
         for m in bc.get("members", []):
             title = (m.get("title") or "").strip()
             if not title:
@@ -98,7 +107,8 @@ def _build_titled_articles(baseline_clusters: list[dict]) -> list[_TitledArticle
             if key in seen_keys:
                 continue
             seen_keys.add(key)
-            rows.append((m["id"], title, cat, entities))
+            synthetic_id += 1
+            rows.append((synthetic_id, title, cat, entities))
 
     if not rows:
         return []
@@ -237,6 +247,10 @@ def _run_category(
     # Singleton rate for predicted clusters in this category
     singleton_rate = sum(1 for g in pred_groups if len(g) == 1) / len(pred_groups) if pred_groups else 0.0
 
+    # Article counts: baseline (unique titles in this category) + predicted (articles in overlapping clusters)
+    baseline_article_count = len(baseline_all_keys)
+    predicted_article_count = len({k for g in pred_groups for k in g})
+
     return {
         "pairwise_precision": round(pw_prec, 6),
         "pairwise_recall": round(pw_rec, 6),
@@ -245,6 +259,8 @@ def _run_category(
         "predicted_pair_count": pred_pairs,
         "baseline_cluster_count": len(base_shapes),
         "generated_cluster_count": len(pred_shapes),
+        "baseline_article_count": baseline_article_count,
+        "predicted_article_count": predicted_article_count,
         "singleton_rate": round(singleton_rate, 4),
         "baseline_clusters": base_shapes,
         "generated_clusters": pred_shapes,
@@ -278,7 +294,8 @@ def run_benchmark(baseline_dir: Path) -> dict[str, Any]:
     pred_label_to_members: dict[int, list[_TitledArticle]] = _cluster_groups(titled_articles)  # type: ignore[arg-type]
     print(f"  Predicted clusters: {len(pred_label_to_members)}")
 
-    # Group baseline clusters by category
+    # Group baseline clusters by category.
+    # RSS-based clusters have no category, so they all land in "unknown".
     by_category: dict[str, list[dict]] = defaultdict(list)
     for bc in all_baseline_clusters:
         cat = bc.get("category") or "unknown"
@@ -337,6 +354,7 @@ def run_benchmark(baseline_dir: Path) -> dict[str, Any]:
 
     aggregate = {
         "category_count": len(categories),
+        "total_article_count": len(titled_articles),
         "baseline_cluster_count": len(all_baseline_clusters),
         "predicted_cluster_count": len(pred_label_to_members),
         "cluster_count_ratio": round(cluster_count_ratio, 4) if cluster_count_ratio else None,

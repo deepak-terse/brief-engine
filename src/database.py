@@ -4,6 +4,8 @@ import logging
 import sqlite3
 from pathlib import Path
 
+from .utils import log_time
+
 logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "data" / "brief_engine.db"
@@ -13,6 +15,7 @@ def get_connection() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     return conn
 
+@log_time
 def init_database(db_path: Path | None = None) -> None:
 	if db_path is None:
 		db_path = DB_PATH
