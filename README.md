@@ -19,6 +19,16 @@ To create a highly relevant, locally contextual daily brief for distribution, wh
 
 ---
 
+## Screenshots
+
+**Landing page** — the Powai Daily website homepage:
+![Powai Daily landing page](assets/screenshot0.png)
+
+**Sample edition** — a full daily brief rendered on the site:
+![Sample daily brief edition](assets/screenshot1.png)
+
+---
+
 ## Tech Stack and Architecture
 
 ### Pipeline (Python)
