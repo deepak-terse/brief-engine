@@ -1,111 +1,202 @@
 # Brief Engine
 
-An automated pipeline that ingests multi-source news, filters and clusters it, and uses AI to generate a highly relevant, locally contextual daily brief for distribution.
+> An open-source intelligence engine that turns noisy information into a focused daily brief.
 
-## Goal
+Brief Engine ingests RSS content from multiple sources, groups related stories, ranks what matters, and generates concise summaries using local LLMs.
 
-To create a highly relevant, locally contextual daily brief for distribution, which I can share with my friends and family, who live in Powai, Mumbai, India. The goal was to start with a MVP, with clear metrics to evaluate the system and improve upon it iterately. This could potentially be scaled to multiple locations or even a fully-fledged news distribution service.
+```text
+Sources → Extract → Cluster → Rank → Summarise → Publish
+```
 
----
+## Why this project exists
 
-## Features
+The internet produces more information than any person can reasonably absorb.
 
-- Ingests RSS feeds from multiple sources (Mumbai Live, Google News, The Hindu) across Powai, Mumbai, India, and World scopes
-- NLP enrichment: named entity extraction + semantic embedding per article
-- Unsupervised topic clustering to group cross-source coverage of the same story
-- Local LLM (via Ollama) generates reader-impact headlines, summaries, and "why it matters" explanations
-- Template-driven newsletter assembly with configurable section filters, scoring, and deduplication
-- Outputs structured Markdown editions rendered by an Astro static site
+Brief Engine is a practical response to that problem: filter the signal, reduce duplication, surface the stories that matter, and present them in a format that is fast to read and easy to trust.
 
----
+What started as a local, personal daily brief for Powai, Mumbai evolved into a broader idea: build a reusable pipeline for turning fragmented news into a clean, narrative summary.
+
+## What it does
+
+- 📰 Ingests news from multiple RSS sources
+- 🧠 Extracts entities and generates embeddings
+- 🔗 Clusters related stories across sources
+- 📊 Ranks stories by relevance, recency, and source diversity
+- ✍️ Generates newsletters-style headlines and summaries
+- 🤖 Uses local LLMs through Ollama instead of paid APIs
+- 📝 Publishes clean Markdown editions for a static site
+
+## Built for
+
+- Local and community news
+- AI and technology news
+- Developer and open-source intelligence
+- Research and industry monitoring
+- Personalized information feeds
+
+## Why it stands out
+
+This project combines multiple real-world engineering patterns in one system:
+
+- Multi-source ingestion with normalization and deduplication
+- NLP enrichment using entity extraction and semantic embeddings
+- Unsupervised clustering to group related coverage across providers
+- Ranking logic based on relevance, recency, and source diversity
+- Local-first AI summarization with Ollama, avoiding paid API dependency
+- Static publishing with Astro for lightweight content delivery
+
+It is not just a prompt demo; it is a pipeline system that turns raw information into something useful.
+
+## Architecture
+
+### Pipeline overview
+
+| Stage | Technology | Purpose |
+|---|---|---|
+| Fetch | `feedparser` | Pull articles from RSS feeds |
+| Extract | `spaCy` + `sentence-transformers` | Extract entities and encode article meaning |
+| Cluster | `scikit-learn` | Group related stories across sources |
+| Rank | Custom scoring logic | Prioritize high-signal stories |
+| Summarise | Ollama + local LLM | Generate concise, impact-focused summaries |
+| Publish | Astro + Markdown | Render the final brief as structured content |
+
+### Runtime and storage
+
+- SQLite for local persistence and easy inspection
+- Python orchestration for the full pipeline
+- Astro static site for fast, low-maintenance content delivery
+
+## Local-first by design
+
+The system is intentionally designed to run without paid APIs:
+
+- Ollama
+- Qwen
+- spaCy
+- SQLite
+- Sentence Transformers
+
+No paid API required.
+
+## Example workflow
+
+```text
+500+ articles
+      ↓
+Related stories clustered
+      ↓
+Important stories ranked
+      ↓
+Daily brief generated
+```
 
 ## Screenshots
 
-**Landing page** — the Powai Daily website homepage:
+### Landing page
+
 ![Powai Daily landing page](assets/screenshot0.png)
 
-**Sample edition** — a full daily brief rendered on the site:
+### Sample edition
+
 ![Sample daily brief edition](assets/screenshot1.png)
 
----
-
-## Tech Stack and Architecture
-
-### Pipeline (Python)
-
-| Component | Technology | Why |
-|---|---|---|
-| RSS Fetching | `feedparser` | Lightweight, zero-auth, battle-tested |
-| NLP / Entities | `spaCy` (`en_core_web_sm`) | Fast CPU inference; entity extraction is rule-light |
-| Semantic Embeddings | `sentence-transformers` (`all-MiniLM-L6-v2`) | 384-dim, L2-normalised; good accuracy/speed tradeoff for local use |
-| Topic Clustering | `sklearn` AgglomerativeClustering (cosine, avg linkage) | No fixed `k` needed; distance threshold naturally handles sparse days |
-| AI Enrichment | `ollama` + `qwen3:8b-q4_K_M` | Fully local — no API costs, no data egress, runs on consumer hardware |
-| Storage | SQLite (WAL mode) | Zero-ops, portable, sufficient for single-node daily runs |
-
-### Website
-
-- **Astro** static site — content driven from Markdown files generated by the pipeline
-- Separate `publish` step decouples pipeline runs from site renders
-
-### Key Design Decisions & Tradeoffs
-
-- **Local LLM over cloud API** — avoids server cost; tradeoff is slower throughput and occasional quality variance vs. GPT-4
-- **Agglomerative clustering over k-means** — handles variable daily article volume without pre-specifying cluster count; slightly slower but more robust
-- **Story signature = entities + text** — anchors embeddings on named entities before encoding, improving cluster coherence for news (vs. raw text embedding alone)
-- **Importance score = weighted blend** of article count (cross-source coverage), recency (exponential decay), and source diversity — avoids single-source spikes dominating the brief
-- **Template-driven newsletter layout** — sections are config, not code; adding a new newsletter edition requires zero Python changes
-- **SQLite over Postgres** — sufficient for a single-user daily pipeline; easy to inspect, back up, and ship; no infra overhead
-
----
-
-## Getting Started
+## Getting started
 
 ### Prerequisites
 
-- Python ≥ 3.12 with [`uv`](https://docs.astral.sh/uv/) (`pip install uv`)
-- Node.js ≥ 18 (for the Astro website)
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) for dependency management
+- Node.js 18+
 - [Ollama](https://ollama.com) running locally
 
-### Installation and Setup
+### Installation
 
-```sh
-# Install Python dependencies
+```bash
+git clone https://github.com/deepak-terse/brief-engine
+cd brief-engine
 uv sync
+```
 
-# Pull the LLM (one-time, ~5 GB)
+Pull the model used by the pipeline:
+
+```bash
 ollama pull qwen3:8b-q4_K_M
+```
 
-# Install website dependencies
+Install the website dependencies:
+
+```bash
 cd website && npm install
 ```
 
-### Configuration
+### Configure the pipeline
 
-Edit `src/config.py` to customise:
-- `RSS_FEEDS` — add/remove RSS sources and their scope/category tags
-- `BRIEF_TEMPLATES` — define newsletter sections, filters, and scoring weights
-- `CLUSTER_DISTANCE_THRESHOLD` — tune topic grouping granularity (`0.55` by default)
-- `MODEL` in `src/model.py` — swap the Ollama model
+Edit `src/config.py` to customize:
 
-### Running the Pipeline
+- `RSS_FEEDS` for source and scope setup
+- `BRIEF_TEMPLATES` for section logic and scoring
+- `CLUSTER_DISTANCE_THRESHOLD` for story grouping granularity
 
-```sh
-# 1. Run the full pipeline (fetch → enrich → cluster → AI enrich → generate)
+You can also swap the model in `src/model.py`.
+
+### Run the pipeline
+
+```bash
+# Fetch, enrich, cluster, rank, and generate the brief
 uv run start
 
-# 2. Export briefs to Markdown files for the website
+# Export generated briefs to Markdown for the website
 uv run publish
 
-# 3. Start the website dev server
+# Start the Astro site locally
 cd website && npm run dev
-# → http://localhost:4321
 ```
+
+The site is typically available at:
+
+```text
+http://localhost:4321
+```
+
+## Why it matters
+
+The goal is not just to collect headlines. It is to reduce noise and surface what deserves attention.
+
+Brief Engine is an attempt to turn information overload into a focused, trustworthy daily brief that helps a reader decide what is worth knowing.
+
+## Contributing
+
+Contributions are welcome.
+
+This project is a practical end-to-end AI pipeline for local news intelligence, with opportunities in:
+
+- ranking and deduplication
+- cluster quality and topic grouping
+- LLM prompt tuning and summary quality
+- source expansion and filtering
+- frontend and newsletter UX
+
+If you are interested in improving the pipeline, adding sources, or tuning the publication flow, open an issue or submit a pull request.
+
+## Roadmap
+
+- Scheduled daily runs
+- Email and WhatsApp delivery
+- Feedback-driven ranking improvements
+- Multi-city and multi-audience support
+- Better observability and quality metrics
+- More source adapters and content filters
+
+## Contributing
+
+Contributions are welcome.
+
+If you are interested in improving the pipeline, adding sources, tuning ranking, or enhancing the publishing experience, open an issue or start a pull request.
+
+## License
+
+This project is open source and intended for learning, experimentation, and community improvement.
 
 ---
 
-## Future Roadmap
-
-- Scheduled daily runs (cron / launchd)
-- Email/WhatsApp delivery integration
-- Feedback loop — reader engagement signals to tune importance scoring
-- Multi-city / multi-audience template support
+Built to make information more useful, not just more available.
