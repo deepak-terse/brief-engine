@@ -1,5 +1,8 @@
 # Brief Engine
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-D22128?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0)
+[![AI: Ollama](https://img.shields.io/badge/AI-Ollama-10B981?logoColor=white&logo=ollama&logoColor=white)](https://ollama.com)
+
 > An open-source intelligence engine that turns noisy information into a focused daily brief.
 
 Brief Engine ingests RSS content from multiple sources, groups related stories, ranks what matters, and generates concise summaries using local LLMs.
