@@ -134,7 +134,7 @@ http://localhost:4321
 
 ## License
 
-MIT — open source for learning, experimentation, and personal productivity.
+Apache 2.0 — open source for learning, experimentation, and personal productivity.
 
 ---
 
