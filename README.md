@@ -1,10 +1,12 @@
-# Brief Engine
+<div align="center">
+<h1> Brief Engine</h1>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-D22128?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Package Manager: uv](https://img.shields.io/badge/uv-Astral-purple?logo=astral&logoColor=white)](https://docs.astral.sh/uv/)
 [![AI: Local LLM](https://img.shields.io/badge/AI-Ollama%20%2F%20Qwen%203-orange?logo=ollama&logoColor=white)](https://ollama.com/)
 [![Web: Astro](https://img.shields.io/badge/Web-Astro%205-BC52EE?logo=astro&logoColor=white)](https://astro.build/)
+</div>
 
 > An open-source local intelligence engine that turns noisy news information into structured, high-signal briefs — running entirely on local compute.
 
@@ -13,6 +15,16 @@ Brief Engine ingests multi-source RSS feeds, extracts named entities and semanti
 ```text
 Feeds → Ingest & Filter → NLP Enrich → Cluster → Rank → Summarise → Publish
 ```
+
+## Screenshots
+
+### Landing page
+
+![Powai Daily landing page](assets/screenshot0.png)
+
+### Sample edition
+
+![Sample daily brief edition](assets/screenshot1.png)
 
 ## The Problem
 
@@ -75,16 +87,6 @@ The name Brief Engine reflects the core idea: **turn noisy information into acti
 | Local AI | `ollama` (Qwen 3 8B Q4_K_M) |
 | Storage | `sqlite3` (WAL mode, binary BLOBs) |
 | Presentation & Delivery | Astro 5, TypeScript, Markdown Content Collections |
-
-## Screenshots
-
-### Landing page
-
-![Powai Daily landing page](assets/screenshot0.png)
-
-### Sample edition
-
-![Sample daily brief edition](assets/screenshot1.png)
 
 ## Getting started
 
