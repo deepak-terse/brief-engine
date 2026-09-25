@@ -1,3 +1,4 @@
+<div align="center">
 # Brief Engine
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-D22128?logo=apache&logoColor=white)](https://www.apache.org/licenses/LICENSE-2.0)
@@ -8,11 +9,23 @@
 
 > An open-source local intelligence engine that turns noisy news information into structured, high-signal briefs — running entirely on local compute.
 
+</div>
+
 Brief Engine ingests multi-source RSS feeds, extracts named entities and semantic embeddings, clusters related coverage across sources, ranks stories by reader impact and recency, and generates concise editorial editions using local LLMs. No cloud API keys or external data egress required.
 
 ```text
 Feeds → Ingest & Filter → NLP Enrich → Cluster → Rank → Summarise → Publish
 ```
+
+## Screenshots
+
+### Landing page
+
+![Powai Daily landing page](.github/assets/screenshot0.png)
+
+### Sample edition
+
+![Sample daily brief edition](.github/assets/screenshot1.png)
 
 ## The Problem
 
@@ -75,16 +88,6 @@ The name Brief Engine reflects the core idea: **turn noisy information into acti
 | Local AI | `ollama` (Qwen 3 8B Q4_K_M) |
 | Storage | `sqlite3` (WAL mode, binary BLOBs) |
 | Presentation & Delivery | Astro 5, TypeScript, Markdown Content Collections |
-
-## Screenshots
-
-### Landing page
-
-![Powai Daily landing page](assets/screenshot0.png)
-
-### Sample edition
-
-![Sample daily brief edition](assets/screenshot1.png)
 
 ## Getting started
 
